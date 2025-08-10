@@ -14,6 +14,16 @@
       "slug": "html",
       "name": "HTML",
       "file": "quizzes/html.json"
+    },
+    {
+      "slug": "itdr",
+      "name": "ITDR",
+      "file": "quizzes/itdr.json"
+    },
+    {
+      "slug": "crowdstrike",
+      "name": "CrowdStrike",
+      "file": "quizzes/crowdstrike.json"
     }
   ]
 }

@@ -59,14 +59,18 @@ function showScreen(name) {
 async function loadManifest() {
   const res = await fetch('quizzes/subjects.json');
   const data = await res.json();
-  state.subjects = data.subjects || [];
+  state.subjects = (data.subjects || []).slice();
+  // Sort subjects alphabetically by name
+  state.subjects.sort((a, b) => a.name.localeCompare(b.name));
   els.subjectSelect.innerHTML = '';
-  state.subjects.forEach(s => {
+  state.subjects.forEach((s, idx) => {
     const opt = document.createElement('option');
     opt.value = s.slug;
     opt.textContent = s.name;
+    if (idx === 0) opt.selected = true;
     els.subjectSelect.appendChild(opt);
   });
+  // Set default to first item in sorted list
   state.selectedSubjectSlug = state.subjects[0]?.slug || null;
 }
 
@@ -85,7 +89,13 @@ async function loadSubject(slug) {
 function buildDeck() {
   const pool = state.sourceItems.filter(q => q.level === state.selectedDifficulty);
   if (pool.length === 0) return [];
-  const n = clamp(state.count, 1, pool.length);
+  let n = state.count;
+  // If 'All' is selected, use all available questions
+  if (isNaN(n) || els.countSelect.value === 'All') {
+    n = pool.length;
+  } else {
+    n = clamp(n, 1, pool.length);
+  }
   const deck = shuffle(pool).slice(0, n).map(q => {
     const correct = q.choices[q.answerIndex];
     const choices = shuffle(q.choices);

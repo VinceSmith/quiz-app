@@ -1,0 +1,180 @@
+{
+  "items": [
+    
+    {
+      "level": "Beginner",
+      "question": "What does ITDR stand for?",
+      "choices": ["Identity Threat Detection and Response", "Internet Threat Detection and Response", "Internal Threat Detection and Remediation", "Identity Tracking and Data Recovery"],
+      "answerIndex": 0,
+      "explanation": "ITDR stands for Identity Threat Detection and Response."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a primary goal of ITDR?",
+      "choices": ["Detect identity-based threats", "Monitor network traffic", "Manage cloud resources", "Optimize database performance"],
+      "answerIndex": 0,
+      "explanation": "ITDR focuses on detecting threats related to identities."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which type of account is most commonly targeted in identity attacks?",
+      "choices": ["Privileged accounts", "Guest accounts", "Service accounts", "Test accounts"],
+      "answerIndex": 0,
+      "explanation": "Privileged accounts are high-value targets for attackers."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is credential stuffing?",
+      "choices": ["Using stolen credentials to access multiple accounts", "Encrypting credentials", "Deleting credentials", "Creating fake credentials"],
+      "answerIndex": 0,
+      "explanation": "Credential stuffing is using stolen credentials across multiple sites."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which protocol is commonly used for authentication?",
+      "choices": ["LDAP", "SMTP", "FTP", "DNS"],
+      "answerIndex": 0,
+      "explanation": "LDAP is widely used for authentication."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is multi-factor authentication (MFA)?",
+      "choices": ["Using more than one method to verify identity", "Using a single password", "Using a firewall", "Using encryption"],
+      "answerIndex": 0,
+      "explanation": "MFA requires multiple forms of verification."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is NOT a factor in MFA?",
+      "choices": ["Something you know", "Something you have", "Something you are", "Something you eat"],
+      "answerIndex": 3,
+      "explanation": "'Something you eat' is not a factor in MFA."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the purpose of Single Sign-On (SSO)?",
+      "choices": ["Allow users to access multiple systems with one login", "Encrypt all user data", "Monitor network traffic", "Block phishing attacks"],
+      "answerIndex": 0,
+      "explanation": "SSO lets users access multiple systems with one set of credentials."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which attack involves tricking users into revealing credentials?",
+      "choices": ["Phishing", "Brute force", "DDoS", "SQL injection"],
+      "answerIndex": 0,
+      "explanation": "Phishing attacks trick users into revealing credentials."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is an identity provider (IdP)?",
+      "choices": ["A service that authenticates users", "A network switch", "A database server", "A web browser"],
+      "answerIndex": 0,
+      "explanation": "IdP authenticates and manages user identities."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a common identity threat?",
+      "choices": ["Account takeover", "Network latency", "Hardware failure", "Software update"],
+      "answerIndex": 0,
+      "explanation": "Account takeover is a common identity threat."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the main function of ITDR tools?",
+      "choices": ["Detect and respond to identity threats", "Monitor CPU usage", "Manage storage devices", "Optimize network speed"],
+      "answerIndex": 0,
+      "explanation": "ITDR tools detect and respond to identity threats."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which technology helps prevent unauthorized access?",
+      "choices": ["Access control", "Data compression", "Load balancing", "Caching"],
+      "answerIndex": 0,
+      "explanation": "Access control restricts unauthorized access."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is a privileged access management (PAM) solution?",
+      "choices": ["A tool to manage privileged accounts", "A backup system", "A network scanner", "A web server"],
+      "answerIndex": 0,
+      "explanation": "PAM manages privileged accounts and access."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a sign of an identity attack?",
+      "choices": ["Unusual login times", "High CPU usage", "Slow internet", "Frequent software updates"],
+      "answerIndex": 0,
+      "explanation": "Unusual login times can indicate an identity attack."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the role of logs in ITDR?",
+      "choices": ["Track user activity", "Increase bandwidth", "Reduce latency", "Encrypt data"],
+      "answerIndex": 0,
+      "explanation": "Logs help track user activity and detect threats."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is NOT an identity threat?",
+      "choices": ["Password reuse", "Phishing", "Account lockout", "Malware"],
+      "answerIndex": 2,
+      "explanation": "Account lockout is not an identity threat."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the purpose of identity governance?",
+      "choices": ["Manage user access and permissions", "Monitor network traffic", "Encrypt files", "Backup data"],
+      "answerIndex": 0,
+      "explanation": "Identity governance manages access and permissions."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a best practice for password management?",
+      "choices": ["Use strong, unique passwords", "Share passwords", "Write passwords on paper", "Use the same password everywhere"],
+      "answerIndex": 0,
+      "explanation": "Strong, unique passwords are best practice."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the purpose of account provisioning?",
+      "choices": ["Create and manage user accounts", "Monitor CPU usage", "Encrypt network traffic", "Scan for malware"],
+      "answerIndex": 0,
+      "explanation": "Account provisioning creates and manages user accounts."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a common ITDR response action?",
+      "choices": ["Disable compromised accounts", "Increase bandwidth", "Install new hardware", "Update software"],
+      "answerIndex": 0,
+      "explanation": "Disabling compromised accounts is a common response."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the purpose of identity analytics?",
+      "choices": ["Analyze identity data for threats", "Compress files", "Monitor network speed", "Backup databases"],
+      "answerIndex": 0,
+      "explanation": "Identity analytics analyzes data for threats."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a risk of poor identity management?",
+      "choices": ["Data breaches", "Faster internet", "Lower CPU usage", "Improved performance"],
+      "answerIndex": 0,
+      "explanation": "Poor identity management can lead to data breaches."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the role of authentication in ITDR?",
+      "choices": ["Verify user identity", "Monitor network traffic", "Encrypt files", "Backup data"],
+      "answerIndex": 0,
+      "explanation": "Authentication verifies user identity."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of the following is a common authentication method?",
+      "choices": ["Password", "IP address", "MAC address", "Hostname"],
+      "answerIndex": 0,
+      "explanation": "Password is a common authentication method."
+  }
+  ]
+}
