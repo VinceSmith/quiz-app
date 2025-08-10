@@ -59,6 +59,737 @@
       ],
       "answerIndex": 1,
       "explanation": "The Global Interpreter Lock (GIL) allows only one thread to execute Python bytecode at a time."
-    }
+  },
+
+    {
+      "level": "Beginner",
+      "question": "Which symbol is used for comments in Python?",
+      "choices": ["#", "//", "--", "/*"],
+      "answerIndex": 0,
+      "explanation": "# is used for comments."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print('Hello' + 'World')?",
+      "choices": ["HelloWorld", "Hello World", "Error", "Hello+World"],
+      "answerIndex": 0,
+      "explanation": "String concatenation without space."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which data type is used to store True/False values?",
+      "choices": ["int", "str", "bool", "float"],
+      "answerIndex": 2,
+      "explanation": "bool is for True/False."
+    },
+    {
+      "level": "Beginner",
+      "question": "How do you start a for loop in Python?",
+      "choices": ["for i in range(5):", "for (i=0; i<5; i++)", "foreach i in 5", "loop i in 5"],
+      "answerIndex": 0,
+      "explanation": "for i in range(5): is correct syntax."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which function prints output in Python?",
+      "choices": ["echo()", "print()", "output()", "write()"],
+      "answerIndex": 1,
+      "explanation": "print() is used for output."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print(type(42))?",
+      "choices": ["<class 'int'>", "int", "type", "42"],
+      "answerIndex": 0,
+      "explanation": "type(42) returns <class 'int'>."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which keyword is used to import modules?",
+      "choices": ["include", "import", "require", "using"],
+      "answerIndex": 1,
+      "explanation": "import is used for modules."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print(len('Python'))?",
+      "choices": ["5", "6", "7", "Error"],
+      "answerIndex": 1,
+      "explanation": "'Python' has 6 letters."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which of these is a valid variable name?",
+      "choices": ["2name", "name_2", "name-2", "name 2"],
+      "answerIndex": 1,
+      "explanation": "name_2 is valid."
+    },
+    {
+      "level": "Beginner",
+      "question": "How do you write a string in Python?",
+      "choices": ["'text'", "text", "[text]", "{text}"],
+      "answerIndex": 0,
+      "explanation": "Strings use quotes."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which function converts a string to an integer?",
+      "choices": ["str()", "int()", "float()", "bool()"],
+      "answerIndex": 1,
+      "explanation": "int() converts to integer."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print(10 // 3)?",
+      "choices": ["3.33", "3", "4", "Error"],
+      "answerIndex": 1,
+      "explanation": "// is integer division."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which keyword is used to define a class?",
+      "choices": ["object", "class", "type", "struct"],
+      "answerIndex": 1,
+      "explanation": "class is used for classes."
+    },
+    {
+      "level": "Beginner",
+      "question": "How do you get user input in Python?",
+      "choices": ["input()", "get()", "read()", "scan()"],
+      "answerIndex": 0,
+      "explanation": "input() gets user input."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which operator checks equality?",
+      "choices": ["=", "==", "!=", "equals"],
+      "answerIndex": 1,
+      "explanation": "== checks equality."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print([1,2,3][0])?",
+      "choices": ["1", "2", "3", "0"],
+      "answerIndex": 0,
+      "explanation": "Lists are zero-indexed."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which function returns the length of a list?",
+      "choices": ["size()", "count()", "len()", "length()"],
+      "answerIndex": 2,
+      "explanation": "len() returns length."
+    },
+    {
+      "level": "Beginner",
+      "question": "How do you write a multi-line string?",
+      "choices": ["'''text'''", "text\ntext", "text; text", "text text"],
+      "answerIndex": 0,
+      "explanation": "Triple quotes for multi-line strings."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which value represents 'nothing' in Python?",
+      "choices": ["null", "None", "void", "empty"],
+      "answerIndex": 1,
+      "explanation": "None is Python's null value."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print(bool(0))?",
+      "choices": ["True", "False", "0", "Error"],
+      "answerIndex": 1,
+      "explanation": "bool(0) is False."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which function sorts a list in place?",
+      "choices": ["sort()", "order()", "arrange()", "sorted()"],
+      "answerIndex": 0,
+      "explanation": "sort() sorts in place."
+    },
+    {
+      "level": "Beginner",
+      "question": "How do you access dictionary values?",
+      "choices": ["dict.key", "dict[key]", "dict->key", "dict(key)"],
+      "answerIndex": 1,
+      "explanation": "dict[key] accesses values."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which function returns the maximum value?",
+      "choices": ["max()", "maximum()", "top()", "highest()"],
+      "answerIndex": 0,
+      "explanation": "max() returns maximum."
+    },
+    {
+      "level": "Beginner",
+      "question": "What is the output of print(type([]))?",
+      "choices": ["<class 'list'>", "list", "[]", "Error"],
+      "answerIndex": 0,
+      "explanation": "type([]) is <class 'list'>."
+    },
+    {
+      "level": "Beginner",
+      "question": "Which function returns the absolute value?",
+      "choices": ["abs()", "absolute()", "fabs()", "value()"],
+      "answerIndex": 0,
+      "explanation": "abs() returns absolute value."
+  },
+
+    {
+      "level": "Intermediate",
+      "question": "What is the output of print('a,b,c'.split(','))?",
+      "choices": ["['a', 'b', 'c']", "['a,b,c']", "('a','b','c')", "Error"],
+      "answerIndex": 0,
+      "explanation": "split(',') splits by comma."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which method adds an item to a list?",
+      "choices": ["add()", "append()", "insert()", "push()"],
+      "answerIndex": 1,
+      "explanation": "append() adds to list."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What is the output of print({1,2,3} & {2,3,4})?",
+      "choices": ["{2,3}", "{1,4}", "{1,2,3,4}", "Error"],
+      "answerIndex": 0,
+      "explanation": "& is set intersection."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a sorted copy of a list?",
+      "choices": ["sort()", "sorted()", "order()", "copy()"],
+      "answerIndex": 1,
+      "explanation": "sorted() returns a sorted copy."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you handle exceptions in Python?",
+      "choices": ["try/except", "catch/except", "error/except", "handle/except"],
+      "answerIndex": 0,
+      "explanation": "try/except is used."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What is the output of print([x for x in range(3)])?",
+      "choices": ["[0,1,2]", "[1,2,3]", "[0,1,2,3]", "Error"],
+      "answerIndex": 0,
+      "explanation": "range(3) gives 0,1,2."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which method removes the last item from a list?",
+      "choices": ["remove()", "pop()", "delete()", "discard()"],
+      "answerIndex": 1,
+      "explanation": "pop() removes last item."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a key exists in a dictionary?",
+      "choices": ["key in dict", "dict.has(key)", "dict.exists(key)", "dict[key] != None"],
+      "answerIndex": 0,
+      "explanation": "key in dict checks existence."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What is the output of print(bool([]))?",
+      "choices": ["True", "False", "[]", "Error"],
+      "answerIndex": 1,
+      "explanation": "Empty list is False."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the minimum value?",
+      "choices": ["min()", "minimum()", "lowest()", "bottom()"],
+      "answerIndex": 0,
+      "explanation": "min() returns minimum."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you create a tuple?",
+      "choices": ["(1,2)", "[1,2]", "{1,2}", "tuple(1,2)"],
+      "answerIndex": 0,
+      "explanation": "Tuples use parentheses."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which method returns the index of an item in a list?",
+      "choices": ["find()", "index()", "search()", "locate()"],
+      "answerIndex": 1,
+      "explanation": "index() returns index."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What is the output of print('Python'.lower())?",
+      "choices": ["python", "PYTHON", "Python", "error"],
+      "answerIndex": 0,
+      "explanation": "lower() makes lowercase."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the sum of a list?",
+      "choices": ["sum()", "add()", "total()", "plus()"],
+      "answerIndex": 0,
+      "explanation": "sum() returns sum."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you reverse a list?",
+      "choices": ["list.reverse()", "reverse(list)", "list[::-1]", "list.reversed()"],
+      "answerIndex": 2,
+      "explanation": "list[::-1] reverses list."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the type of an object?",
+      "choices": ["type()", "class()", "object()", "typeof()"],
+      "answerIndex": 0,
+      "explanation": "type() returns type."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you remove duplicates from a list?",
+      "choices": ["set(list)", "unique(list)", "list.remove_duplicates()", "list.distinct()"],
+      "answerIndex": 0,
+      "explanation": "set(list) removes duplicates."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a range of numbers?",
+      "choices": ["range()", "list()", "numbers()", "seq()"],
+      "answerIndex": 0,
+      "explanation": "range() returns numbers."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you join a list of strings?",
+      "choices": ["' '.join(list)", "join(list)", "list.join(' ')", "concat(list)"],
+      "answerIndex": 0,
+      "explanation": "' '.join(list) joins strings."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a list of keys from a dictionary?",
+      "choices": ["dict.keys()", "keys(dict)", "dict.get_keys()", "dict.keylist()"],
+      "answerIndex": 0,
+      "explanation": "dict.keys() returns keys."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check the length of a string?",
+      "choices": ["len()", "length()", "size()", "count()"],
+      "answerIndex": 0,
+      "explanation": "len() checks length."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a list of values from a dictionary?",
+      "choices": ["dict.values()", "values(dict)", "dict.get_values()", "dict.valuelist()"],
+      "answerIndex": 0,
+      "explanation": "dict.values() returns values."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you convert a list to a tuple?",
+      "choices": ["tuple(list)", "list.tuple()", "convert(list)", "to_tuple(list)"],
+      "answerIndex": 0,
+      "explanation": "tuple(list) converts to tuple."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a list of items from a dictionary?",
+      "choices": ["dict.items()", "items(dict)", "dict.get_items()", "dict.itemlist()"],
+      "answerIndex": 0,
+      "explanation": "dict.items() returns items."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a value is in a list?",
+      "choices": ["value in list", "list.has(value)", "list.exists(value)", "list[value] != None"],
+      "answerIndex": 0,
+      "explanation": "value in list checks existence."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the ASCII value of a character?",
+      "choices": ["ord()", "ascii()", "char()", "code()"],
+      "answerIndex": 0,
+      "explanation": "ord() returns ASCII value."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you convert an integer to a string?",
+      "choices": ["str()", "int()", "string()", "to_string()"],
+      "answerIndex": 0,
+      "explanation": "str() converts to string."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the Unicode character for an integer?",
+      "choices": ["chr()", "unicode()", "char()", "code()"],
+      "answerIndex": 0,
+      "explanation": "chr() returns Unicode character."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string starts with a substring?",
+      "choices": ["str.startswith()", "str.begins()", "str.starts()", "str.has_prefix()"],
+      "answerIndex": 0,
+      "explanation": "str.startswith() checks prefix."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the index of a substring?",
+      "choices": ["str.find()", "str.index()", "str.search()", "str.locate()"],
+      "answerIndex": 0,
+      "explanation": "str.find() returns index."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you replace a substring in a string?",
+      "choices": ["str.replace()", "str.sub()", "str.swap()", "str.change()"],
+      "answerIndex": 0,
+      "explanation": "str.replace() replaces substring."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a list of words from a string?",
+      "choices": ["str.split()", "split(str)", "str.words()", "str.tokenize()"],
+      "answerIndex": 0,
+      "explanation": "str.split() splits string."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you remove whitespace from a string?",
+      "choices": ["str.strip()", "str.clean()", "str.trim()", "str.remove()"],
+      "answerIndex": 0,
+      "explanation": "str.strip() removes whitespace."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns a copy of a list?",
+      "choices": ["list.copy()", "copy(list)", "list.duplicate()", "list.clone()"],
+      "answerIndex": 0,
+      "explanation": "list.copy() returns copy."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is numeric?",
+      "choices": ["str.isnumeric()", "str.isdigit()", "str.isnumber()", "str.isint()"],
+      "answerIndex": 0,
+      "explanation": "str.isnumeric() checks numeric."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the reversed iterator of a list?",
+      "choices": ["reversed(list)", "list.reverse()", "reverse(list)", "list[::-1]"],
+      "answerIndex": 0,
+      "explanation": "reversed(list) returns iterator."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is uppercase?",
+      "choices": ["str.isupper()", "str.upper()", "str.isuppercase()", "str.iscaps()"],
+      "answerIndex": 0,
+      "explanation": "str.isupper() checks uppercase."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the lowercase version of a string?",
+      "choices": ["str.lower()", "str.downcase()", "str.tolower()", "str.small()"],
+      "answerIndex": 0,
+      "explanation": "str.lower() returns lowercase."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is lowercase?",
+      "choices": ["str.islower()", "str.lower()", "str.islowercase()", "str.ismin()"],
+      "answerIndex": 0,
+      "explanation": "str.islower() checks lowercase."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the uppercase version of a string?",
+      "choices": ["str.upper()", "str.upcase()", "str.toupper()", "str.big()"],
+      "answerIndex": 0,
+      "explanation": "str.upper() returns uppercase."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string contains only alphabetic characters?",
+      "choices": ["str.isalpha()", "str.isletters()", "str.isalphabet()", "str.isword()"],
+      "answerIndex": 0,
+      "explanation": "str.isalpha() checks alphabetic."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the count of a substring in a string?",
+      "choices": ["str.count()", "str.tally()", "str.num()", "str.total()"],
+      "answerIndex": 0,
+      "explanation": "str.count() returns count."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string ends with a substring?",
+      "choices": ["str.endswith()", "str.ends()", "str.has_suffix()", "str.finish()"],
+      "answerIndex": 0,
+      "explanation": "str.endswith() checks suffix."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the partitioned tuple of a string?",
+      "choices": ["str.partition()", "str.split()", "str.divide()", "str.chunk()"],
+      "answerIndex": 0,
+      "explanation": "str.partition() partitions string."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is decimal?",
+      "choices": ["str.isdecimal()", "str.isdigit()", "str.isnumber()", "str.isfloat()"],
+      "answerIndex": 0,
+      "explanation": "str.isdecimal() checks decimal."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the zfilled version of a string?",
+      "choices": ["str.zfill()", "str.fill()", "str.pad()", "str.zero()"],
+      "answerIndex": 0,
+      "explanation": "str.zfill() pads with zeros."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is printable?",
+      "choices": ["str.isprintable()", "str.printable()", "str.isprint()", "str.canprint()"],
+      "answerIndex": 0,
+      "explanation": "str.isprintable() checks printable."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the titlecased version of a string?",
+      "choices": ["str.title()", "str.titled()", "str.caps()", "str.capitalize()"],
+      "answerIndex": 0,
+      "explanation": "str.title() returns titlecase."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is space?",
+      "choices": ["str.isspace()", "str.space()", "str.isblank()", "str.isempty()"],
+      "answerIndex": 0,
+      "explanation": "str.isspace() checks space."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the capitalized version of a string?",
+      "choices": ["str.capitalize()", "str.caps()", "str.title()", "str.upcase()"],
+      "answerIndex": 0,
+      "explanation": "str.capitalize() capitalizes string."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is alphanumeric?",
+      "choices": ["str.isalnum()", "str.isalpha()", "str.isnumber()", "str.isword()"],
+      "answerIndex": 0,
+      "explanation": "str.isalnum() checks alphanumeric."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the expanded tabs in a string?",
+      "choices": ["str.expandtabs()", "str.tabs()", "str.tabify()", "str.spaces()"],
+      "answerIndex": 0,
+      "explanation": "str.expandtabs() expands tabs."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is identifier?",
+      "choices": ["str.isidentifier()", "str.identifier()", "str.isid()", "str.isname()"],
+      "answerIndex": 0,
+      "explanation": "str.isidentifier() checks identifier."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which function returns the encoded version of a string?",
+      "choices": ["str.encode()", "str.coding()", "str.encrypt()", "str.code()"],
+      "answerIndex": 0,
+      "explanation": "str.encode() encodes string."
+    },
+    {
+      "level": "Intermediate",
+      "question": "How do you check if a string is digit?",
+      "choices": ["str.isdigit()", "str.isnumber()", "str.isint()", "str.isdecimal()"],
+      "answerIndex": 0,
+      "explanation": "str.isdigit() checks digit."
+  },
+
+    {
+      "level": "Advanced",
+      "question": "What is a Python decorator?",
+      "choices": ["A function that modifies another function", "A type of variable", "A loop structure", "A class method"],
+      "answerIndex": 0,
+      "explanation": "Decorators modify functions or methods."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is a generator in Python?",
+      "choices": ["A function that returns an iterator", "A type of list", "A class", "A module"],
+      "answerIndex": 0,
+      "explanation": "Generators yield values one at a time."
+    },
+    {
+      "level": "Advanced",
+      "question": "What does the 'yield' keyword do?",
+      "choices": ["Returns a value and pauses the function", "Ends the function", "Raises an exception", "Defines a variable"],
+      "answerIndex": 0,
+      "explanation": "yield returns a value and suspends function state."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the purpose of __init__.py?",
+      "choices": ["Marks a directory as a Python package", "Initializes variables", "Defines a class", "Imports modules"],
+      "answerIndex": 0,
+      "explanation": "__init__.py marks a package."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([x for x in range(5) if x % 2 == 0])?",
+      "choices": ["[0, 2, 4]", "[1, 3, 5]", "[2, 4]", "[0, 2, 4, 6]"],
+      "answerIndex": 0,
+      "explanation": "List comprehension with condition."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the difference between @staticmethod and @classmethod?",
+      "choices": ["classmethod receives class as first argument, staticmethod does not", "staticmethod receives instance as first argument", "Both are the same", "classmethod is only for inheritance"],
+      "answerIndex": 0,
+      "explanation": "classmethod gets class, staticmethod gets nothing."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({x: x**2 for x in range(3)})?",
+      "choices": ["{0: 0, 1: 1, 2: 4}", "{1: 1, 2: 4, 3: 9}", "{0: 1, 1: 2, 2: 3}", "Error"],
+      "answerIndex": 0,
+      "explanation": "Dictionary comprehension."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print((lambda x: x+1)(2))?",
+      "choices": ["3", "2", "1", "Error"],
+      "answerIndex": 0,
+      "explanation": "Lambda function returns 3."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(3)][-1])?",
+      "choices": ["2", "3", "1", "Error"],
+      "answerIndex": 0,
+      "explanation": "Last element is 2."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i for i in range(3) if i > 0})?",
+      "choices": ["{1, 2}", "{0, 1, 2}", "{2}", "Error"],
+      "answerIndex": 0,
+      "explanation": "Set comprehension with condition."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print((1, 2) + (3, 4))?",
+      "choices": ["(1, 2, 3, 4)", "(1, 2)(3, 4)", "[1, 2, 3, 4]", "Error"],
+      "answerIndex": 0,
+      "explanation": "Tuple concatenation."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({1: 'a', 2: 'b'}.get(3, 'c'))?",
+      "choices": ["c", "a", "b", "Error"],
+      "answerIndex": 0,
+      "explanation": "get() returns default if key missing."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(5) if i % 2])?",
+      "choices": ["[1, 3]", "[0, 2, 4]", "[2, 4]", "[1, 2, 3]"],
+      "answerIndex": 0,
+      "explanation": "Odd numbers from 0 to 4."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i: i for i in range(3)}.keys())?",
+      "choices": ["dict_keys([0, 1, 2])", "[0, 1, 2]", "{0, 1, 2}", "Error"],
+      "answerIndex": 0,
+      "explanation": "keys() returns dict_keys object."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(3)][::-1])?",
+      "choices": ["[2, 1, 0]", "[0, 1, 2]", "[1, 2, 0]", "Error"],
+      "answerIndex": 0,
+      "explanation": "Reverse list."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i: i for i in range(3)}.values())?",
+      "choices": ["dict_values([0, 1, 2])", "[0, 1, 2]", "{0, 1, 2}", "Error"],
+      "answerIndex": 0,
+      "explanation": "values() returns dict_values object."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(3)][1:])?",
+      "choices": ["[1, 2]", "[0, 1]", "[2]", "Error"],
+      "answerIndex": 0,
+      "explanation": "Slice from index 1."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i: i for i in range(3)}.items())?",
+      "choices": ["dict_items([(0, 0), (1, 1), (2, 2)])", "[(0, 0), (1, 1), (2, 2)]", "{0: 0, 1: 1, 2: 2}", "Error"],
+      "answerIndex": 0,
+      "explanation": "items() returns dict_items object."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(3)][::2])?",
+      "choices": ["[0, 2]", "[1, 2]", "[2, 0]", "Error"],
+      "answerIndex": 0,
+      "explanation": "Step slicing."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i: i for i in range(3)}[1])?",
+      "choices": ["1", "0", "2", "Error"],
+      "answerIndex": 0,
+      "explanation": "Access value by key."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(3)][-2])?",
+      "choices": ["1", "2", "0", "Error"],
+      "answerIndex": 0,
+      "explanation": "Second to last element."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i: i for i in range(3)}.get(2))?",
+      "choices": ["2", "0", "1", "Error"],
+      "answerIndex": 0,
+      "explanation": "get() returns value for key."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print([i for i in range(3)][1:3])?",
+      "choices": ["[1, 2]", "[0, 1]", "[2, 3]", "Error"],
+      "answerIndex": 0,
+      "explanation": "Slice from index 1 to 2."
+    },
+    {
+      "level": "Advanced",
+      "question": "What is the output of print({i: i for i in range(3)}.get(3, 'not found'))?",
+      "choices": ["not found", "3", "Error", "None"],
+      "answerIndex": 0,
+      "explanation": "get() returns default if key missing."
+  }
   ]
 }

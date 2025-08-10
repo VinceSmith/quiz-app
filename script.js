@@ -155,6 +155,10 @@ function submit() {
 // Next
 function next() {
   if (!state.submitted) return;
+  // Reset feedback explanation to blank
+  els.feedback.textContent = '';
+  els.feedback.classList.add('hidden');
+  els.feedback.classList.remove('ok', 'bad');
   const last = state.index + 1 >= state.deck.length;
   if (last) {
     showResults();
