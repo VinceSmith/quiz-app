@@ -1,18 +1,52 @@
-[
+{
+  "items": [
     {
-        "question": "What does HTML stand for?",
-        "answers": [
-            { "text": "Hyper Text Markup Language", "correct": true },
-            { "text": "Home Tool Markup Language", "correct": false },
-            { "text": "Hyperlinks and Text Markup Language", "correct": false }
-        ]
+      "level": "Beginner",
+      "question": "What does HTML stand for?",
+      "choices": [
+        "Hyper Text Markup Language",
+        "Home Tool Markup Language",
+        "Hyperlinks and Text Markup Language",
+        "High-level Text Machine Language"
+      ],
+      "answerIndex": 0,
+      "explanation": "HTML = Hyper Text Markup Language."
     },
     {
-        "question": "Which tag is used for the largest heading?",
-        "answers": [
-            { "text": "<h6>", "correct": false },
-            { "text": "<h1>", "correct": true },
-            { "text": "<header>", "correct": false }
-        ]
+      "level": "Beginner",
+      "question": "Which tag renders the largest heading?",
+      "choices": [
+        "<h6>",
+        "<h1>",
+        "<header>",
+        "<heading>"
+      ],
+      "answerIndex": 1,
+      "explanation": "<h1> is the highest level heading."
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which element provides metadata about the HTML document?",
+      "choices": [
+        "<head>",
+        "<footer>",
+        "<meta>",
+        "<title>"
+      ],
+      "answerIndex": 0,
+      "explanation": "The <head> contains metadata; <meta> is one of its children."
+    },
+    {
+      "level": "Advanced",
+      "question": "Which attribute improves accessibility by describing images?",
+      "choices": [
+        "src",
+        "alt",
+        "title",
+        "aria-role"
+      ],
+      "answerIndex": 1,
+      "explanation": "The 'alt' attribute provides alternative text for screen readers."
     }
-]
+  ]
+}

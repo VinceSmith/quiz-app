@@ -1,0 +1,19 @@
+{
+  "subjects": [
+    {
+      "slug": "python",
+      "name": "Python",
+      "file": "quizzes/python.json"
+    },
+    {
+      "slug": "javascript",
+      "name": "JavaScript",
+      "file": "quizzes/javascript.json"
+    },
+    {
+      "slug": "html",
+      "name": "HTML",
+      "file": "quizzes/html.json"
+    }
+  ]
+}

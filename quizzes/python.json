@@ -1,18 +1,64 @@
-[
+{
+  "items": [
     {
-        "question": "What is the output of print(2**3)?",
-        "answers": [
-            { "text": "6", "correct": false },
-            { "text": "8", "correct": true },
-            { "text": "9", "correct": false }
-        ]
+      "level": "Beginner",
+      "question": "What is the output of print(2 ** 3)?",
+      "choices": [
+        "6",
+        "8",
+        "9",
+        "Error"
+      ],
+      "answerIndex": 1,
+      "explanation": "'**' is exponentiation; 2 ** 3 = 8."
     },
     {
-        "question": "Which keyword is used to define a function in Python?",
-        "answers": [
-            { "text": "func", "correct": false },
-            { "text": "def", "correct": true },
-            { "text": "function", "correct": false }
-        ]
+      "level": "Beginner",
+      "question": "Which keyword defines a function in Python?",
+      "choices": [
+        "func",
+        "def",
+        "function",
+        "lambda"
+      ],
+      "answerIndex": 1,
+      "explanation": "Use 'def' to define a function."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does list(map(str, [1,2,3])) produce?",
+      "choices": [
+        "['1', '2', '3']",
+        "[1, 2, 3]",
+        "('1','2','3')",
+        "{'1','2','3'}"
+      ],
+      "answerIndex": 0,
+      "explanation": "map applies str to each element, returning strings; then list() collects them."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What is len(set([1,1,2]))?",
+      "choices": [
+        "3",
+        "2",
+        "1",
+        "Error"
+      ],
+      "answerIndex": 1,
+      "explanation": "A set removes duplicates; {1,2} has length 2."
+    },
+    {
+      "level": "Advanced",
+      "question": "In CPython, the GIL means:",
+      "choices": [
+        "All threads run Python bytecode in parallel",
+        "Only one thread executes Python bytecode at a time",
+        "I/O cannot run concurrently",
+        "Asyncio runs faster than C"
+      ],
+      "answerIndex": 1,
+      "explanation": "The Global Interpreter Lock (GIL) allows only one thread to execute Python bytecode at a time."
     }
-]
+  ]
+}

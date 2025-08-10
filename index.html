@@ -1,31 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Quiz App</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi-Subject Quiz</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-    <div id="main-menu">
-        <h1>Quiz App</h1>
-        <label for="subject">Choose a subject:</label>
-        <select id="subject"></select>
-        <button id="start-btn">Start Quiz</button>
-    </div>
+  <header class="container">
+    <h1>Multi-Subject Quiz</h1>
+    <p class="subtle">Pick a subject and difficulty, then start your quiz.</p>
+  </header>
 
-    <div id="quiz-container" class="hidden">
-        <div id="question"></div>
-        <div id="answers"></div>
-        <button id="next-btn">Next</button>
-        <button id="quit-btn">Quit</button>
-    </div>
+  <!-- Main Menu -->
+  <section id="screen-menu" class="container screen">
+    <div class="card">
+      <h2>New Session</h2>
 
-    <div id="result" class="hidden">
-        <h2>Quiz Finished!</h2>
-        <p id="score"></p>
-        <button id="restart-btn">Back to Main Menu</button>
-    </div>
+      <div class="field">
+        <label for="subjectSelect">Subject</label>
+        <select id="subjectSelect"></select>
+      </div>
 
-    <script src="script.js"></script>
+      <div class="field">
+        <label>Difficulty</label>
+        <div class="chip-row" id="difficultyChips">
+          <button class="chip selected" data-level="Beginner">Beginner</button>
+          <button class="chip" data-level="Intermediate">Intermediate</button>
+          <button class="chip" data-level="Advanced">Advanced</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="countSelect">Number of questions</label>
+        <select id="countSelect">
+          <option>5</option>
+          <option selected>10</option>
+          <option>15</option>
+          <option>20</option>
+          <option>999</option>
+        </select>
+        <small class="subtle">If fewer exist, we'll use all available.</small>
+      </div>
+
+      <div class="actions">
+        <button id="startBtn" class="primary">Start Quiz</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quiz Screen -->
+  <section id="screen-quiz" class="container screen hidden">
+    <div class="card">
+      <div class="toprow">
+        <div id="crumbs" class="subtle"></div>
+        <div id="scoreNow" class="subtle"></div>
+      </div>
+      <div class="progress">
+        <div id="progressBar" class="bar"></div>
+      </div>
+
+      <h2 id="questionStem"></h2>
+      <div id="choices" class="choices"></div>
+
+      <div id="feedback" class="feedback hidden"></div>
+
+      <div class="actions">
+        <button id="submitBtn" class="primary">Submit</button>
+        <button id="nextBtn" class="secondary" disabled>Next</button>
+        <button id="quitBtn">Quit to Main Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results Screen -->
+  <section id="screen-results" class="container screen hidden">
+    <div class="card">
+      <h2>You're done!</h2>
+      <p id="finalScore" class="lead"></p>
+      <div class="actions">
+        <button id="retryBtn" class="primary">Retry (same settings)</button>
+        <button id="menuBtn" class="secondary">Main Menu</button>
+      </div>
+
+      <h3>Review</h3>
+      <div id="reviewList" class="review"></div>
+    </div>
+  </section>
+
+  <footer class="container subtle tiny">
+    GitHub-only mode. Add subjects by dropping a JSON file into <code>quizzes/</code> and listing it in <code>quizzes/subjects.json</code>.
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>

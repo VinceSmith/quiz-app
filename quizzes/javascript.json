@@ -1,18 +1,52 @@
-[
+{
+  "items": [
     {
-        "question": "Which company developed JavaScript?",
-        "answers": [
-            { "text": "Netscape", "correct": true },
-            { "text": "Microsoft", "correct": false },
-            { "text": "Sun Microsystems", "correct": false }
-        ]
+      "level": "Beginner",
+      "question": "Which company originally developed JavaScript?",
+      "choices": [
+        "Netscape",
+        "Microsoft",
+        "Sun Microsystems",
+        "Oracle"
+      ],
+      "answerIndex": 0,
+      "explanation": "Brendan Eich created it at Netscape in 1995."
     },
     {
-        "question": "What does '===' mean in JavaScript?",
-        "answers": [
-            { "text": "Equal value and type", "correct": true },
-            { "text": "Equal value only", "correct": false },
-            { "text": "Assignment", "correct": false }
-        ]
+      "level": "Beginner",
+      "question": "What does '===' mean in JavaScript?",
+      "choices": [
+        "Equal value only",
+        "Assignment",
+        "Equal value and type",
+        "Arrow function"
+      ],
+      "answerIndex": 2,
+      "explanation": "Strict equality: compares value and type, no coercion."
+    },
+    {
+      "level": "Intermediate",
+      "question": "typeof null evaluates to:",
+      "choices": [
+        "'object'",
+        "'null'",
+        "'undefined'",
+        "'boolean'"
+      ],
+      "answerIndex": 0,
+      "explanation": "Historic quirk: typeof null === 'object'."
+    },
+    {
+      "level": "Advanced",
+      "question": "Which event loop queue handles setTimeout callbacks?",
+      "choices": [
+        "Microtask queue",
+        "Render queue",
+        "Task/macrotask queue",
+        "GPU queue"
+      ],
+      "answerIndex": 2,
+      "explanation": "Timers go to the task (macrotask) queue."
     }
-]
+  ]
+}
