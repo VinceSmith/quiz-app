@@ -1,0 +1,18 @@
+[
+    {
+        "question": "What does HTML stand for?",
+        "answers": [
+            { "text": "Hyper Text Markup Language", "correct": true },
+            { "text": "Home Tool Markup Language", "correct": false },
+            { "text": "Hyperlinks and Text Markup Language", "correct": false }
+        ]
+    },
+    {
+        "question": "Which tag is used for the largest heading?",
+        "answers": [
+            { "text": "<h6>", "correct": false },
+            { "text": "<h1>", "correct": true },
+            { "text": "<header>", "correct": false }
+        ]
+    }
+]

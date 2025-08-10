@@ -1,0 +1,18 @@
+[
+    {
+        "question": "What is the output of print(2**3)?",
+        "answers": [
+            { "text": "6", "correct": false },
+            { "text": "8", "correct": true },
+            { "text": "9", "correct": false }
+        ]
+    },
+    {
+        "question": "Which keyword is used to define a function in Python?",
+        "answers": [
+            { "text": "func", "correct": false },
+            { "text": "def", "correct": true },
+            { "text": "function", "correct": false }
+        ]
+    }
+]

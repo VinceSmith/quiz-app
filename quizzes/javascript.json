@@ -1,0 +1,18 @@
+[
+    {
+        "question": "Which company developed JavaScript?",
+        "answers": [
+            { "text": "Netscape", "correct": true },
+            { "text": "Microsoft", "correct": false },
+            { "text": "Sun Microsystems", "correct": false }
+        ]
+    },
+    {
+        "question": "What does '===' mean in JavaScript?",
+        "answers": [
+            { "text": "Equal value and type", "correct": true },
+            { "text": "Equal value only", "correct": false },
+            { "text": "Assignment", "correct": false }
+        ]
+    }
+]

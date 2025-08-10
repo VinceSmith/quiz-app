@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-menu">
+        <h1>Quiz App</h1>
+        <label for="subject">Choose a subject:</label>
+        <select id="subject"></select>
+        <button id="start-btn">Start Quiz</button>
+    </div>
+
+    <div id="quiz-container" class="hidden">
+        <div id="question"></div>
+        <div id="answers"></div>
+        <button id="next-btn">Next</button>
+        <button id="quit-btn">Quit</button>
+    </div>
+
+    <div id="result" class="hidden">
+        <h2>Quiz Finished!</h2>
+        <p id="score"></p>
+        <button id="restart-btn">Back to Main Menu</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
