@@ -16,6 +16,7 @@ body {
   color: var(--text);
   font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Noto Sans, 'Apple Color Emoji', 'Segoe UI Emoji';
 }
+.hidden { display: none !important; }
 .container { max-width: 820px; margin: 24px auto; padding: 0 16px; }
 h1 { margin: 16px 0 4px; font-size: 28px; }
 h2 { margin-top: 12px; }
@@ -49,6 +50,12 @@ button {
   cursor: pointer;
   font-weight: 600;
 }
+/* Tabs */
+.tabs { display: inline-flex; gap: 6px; background: #f1f5f9; padding: 6px; border-radius: 999px; border: 1px solid var(--border); }
+.tab { border: none; background: transparent; padding: 6px 12px; border-radius: 999px; cursor: pointer; font-weight: 600; color: var(--muted); }
+.tab.selected { background: #fff; color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+.tab:focus { outline: 2px solid #c7d2fe; outline-offset: 2px; }
+
 button.primary { background: var(--primary); color: var(--primary-contrast); border-color: var(--primary); }
 button.secondary { background: #fff; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -59,6 +66,16 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .progress .bar { height: 100%; width: 0%; background: var(--primary); transition: width .25s ease; }
 
 .choices { display: grid; gap: 8px; margin-top: 8px; }
+.question-meta { margin: 6px 0 2px; color: var(--muted); font-size: 14px; }
+.badge {
+  display: inline-block;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 12px;
+}
 .choice {
   display: flex; align-items: center; gap: 8px;
   border: 1px solid var(--border); background: #fff; padding: 10px 12px; border-radius: 10px;
@@ -74,3 +91,22 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .review { display: grid; gap: 10px; margin-top: 8px; }
 .review .item { border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: #fff; }
 .review .meta { display: flex; justify-content: space-between; font-size: 14px; }
+
+/* Anki side-by-side reveal */
+.anki-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+.anki-col { border: 1px solid var(--border); border-radius: 10px; background: #fff; padding: 10px; }
+
+/* Subject write-up */
+.writeup-field.hidden { display: none; }
+.writeup {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  max-height: 300px;
+  overflow: auto;
+}
+.writeup h1, .writeup h2, .writeup h3 { margin: 12px 0 6px; }
+.writeup p { margin: 8px 0; }
+.writeup ul { padding-left: 20px; }
+.writeup code { background: #f1f5f9; padding: 1px 4px; border-radius: 4px; }

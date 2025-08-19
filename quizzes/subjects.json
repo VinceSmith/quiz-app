@@ -6,24 +6,9 @@
       "file": "quizzes/python.json"
     },
     {
-      "slug": "javascript",
-      "name": "JavaScript",
-      "file": "quizzes/javascript.json"
-    },
-    {
-      "slug": "html",
-      "name": "HTML",
-      "file": "quizzes/html.json"
-    },
-    {
-      "slug": "itdr",
-      "name": "ITDR",
-      "file": "quizzes/itdr.json"
-    },
-    {
-      "slug": "crowdstrike",
-      "name": "CrowdStrike",
-      "file": "quizzes/crowdstrike.json"
+      "slug": "token-protection",
+  "name": "TLS, DPoP, and mTLS",
+  "file": "quizzes/tls-dpop-mtls.json"
     }
   ]
 }

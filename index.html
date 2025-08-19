@@ -3,48 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Multi-Subject Quiz</title>
+  <title>Quizinator</title>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
   <header class="container">
-    <h1>Multi-Subject Quiz</h1>
-    <p class="subtle">Pick a subject and difficulty, then start your quiz.</p>
+  <h1>Quizinator</h1>
+  <p class="subtle">Pick a subject, then start your multiple choice, Anki, or Cloze quiz.</p>
   </header>
 
   <!-- Main Menu -->
   <section id="screen-menu" class="container screen">
-    <div class="card">
-      <h2>New Session</h2>
-
       <div class="field">
         <label for="subjectSelect">Subject</label>
         <select id="subjectSelect"></select>
       </div>
-
+    <div class="card">
       <div class="field">
-        <label>Difficulty</label>
-        <div class="chip-row" id="difficultyChips">
-          <button class="chip selected" data-level="Beginner">Beginner</button>
-          <button class="chip" data-level="Intermediate">Intermediate</button>
-          <button class="chip" data-level="Advanced">Advanced</button>
+        <div class="tabs" id="modeTabs" role="tablist" aria-label="Sections">
+          <button class="tab selected" data-mode="overview" role="tab" aria-selected="true">Overview</button>
+          <button class="tab" data-mode="mcq" role="tab" aria-selected="false">Multiple choice</button>
+          <button class="tab" data-mode="anki" role="tab" aria-selected="false">Anki</button>
+          <button class="tab" data-mode="cloze" role="tab" aria-selected="false">Cloze</button>
         </div>
       </div>
 
-      <div class="field">
-        <label for="countSelect">Number of questions</label>
-        <select id="countSelect">
-          <option>5</option>
-          <option selected>10</option>
-          <option>20</option>
-          <option>25</option>
-          <option value="all">All</option>
-        </select>
-        <small class="subtle">If fewer exist, we'll use all available.</small>
+      <!-- Overview pane: subject + write-up -->
+      <div id="overviewPane">
+        <div class="field writeup-field hidden" id="writeupField">
+          <label>Read subject write up before taking quizes</label>
+          <div id="subjectWriteup" class="writeup"></div>
+        </div>
       </div>
 
-      <div class="actions">
-        <button id="startBtn" class="primary">Start Quiz</button>
+      <!-- Quiz options pane: difficulty + count + start; only for MCQ/Anki/Cloze tabs -->
+  <div id="quizOptionsPane" class="hidden">
+        <div class="field">
+          <label>Difficulty</label>
+          <div class="chip-row" id="difficultyChips">
+    <button class="chip selected" data-level="Mix">Mix</button>
+    <button class="chip" data-level="Beginner">Beginner</button>
+            <button class="chip" data-level="Intermediate">Intermediate</button>
+            <button class="chip" data-level="Advanced">Advanced</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="countSelect">Number of questions</label>
+          <select id="countSelect">
+    <option value="all" selected>All</option>
+    <option>5</option>
+    <option>10</option>
+            <option>20</option>
+            <option>25</option>
+          </select>
+          <small class="subtle">If fewer exist, we'll use all available.</small>
+        </div>
+        <div class="actions">
+          <button id="startBtn" class="primary">Start Quiz</button>
+        </div>
       </div>
     </div>
   </section>
@@ -60,7 +76,8 @@
         <div id="progressBar" class="bar"></div>
       </div>
 
-      <h2 id="questionStem"></h2>
+  <h2 id="questionStem"></h2>
+  <div id="questionMeta" class="question-meta"></div>
       <div id="choices" class="choices"></div>
 
       <div id="feedback" class="feedback hidden"></div>
@@ -68,6 +85,7 @@
       <div class="actions">
         <button id="submitBtn" class="primary">Submit</button>
         <button id="nextBtn" class="secondary" disabled>Next</button>
+        <button id="finishBtn" class="secondary">Finish Now</button>
         <button id="quitBtn">Quit to Main Menu</button>
       </div>
     </div>
@@ -78,6 +96,7 @@
     <div class="card">
       <h2>You're done!</h2>
       <p id="finalScore" class="lead"></p>
+  <div id="difficultyBreakdown" class="review"></div>
       <div class="actions">
         <button id="retryBtn" class="primary">Retry (same settings)</button>
         <button id="menuBtn" class="secondary">Main Menu</button>
