@@ -1,0 +1,2229 @@
+{
+  "paper_markdown": "# Token Protection: TLS, DPoP, mTLS\n\nTransport Layer Security, or TLS, is the safety wrapper for internet connections. It keeps what you send private, it makes tampering visible, and it lets a client confirm it’s really talking to the right server. In everyday terms, TLS turns an ordinary chat between two computers into a private conversation inside a locked, tamper-evident envelope. When people say **HTTPS**, they mean “HTTP running over TLS.”\n\n## TLS 1.3 Handshake — Step by Step, In Plain Terms\n\n1. **Client hello.** The client proposes how it would like to talk: TLS versions, safe encryption methods, and an ephemeral key share for Diffie–Hellman. It also includes the **hostname** (SNI) it wants so a multi‑tenant server can pick the right certificate.\n2. **Server hello.** The server selects the final settings and returns its own ephemeral key share. From here, most handshake messages are already encrypted.\n3. **Server proves identity.** The server presents a **certificate chain** and proves it controls the private key that matches the certificate.\n4. **Keys derived.** Both sides derive symmetric keys from the ephemeral exchange. This gives **forward secrecy**: even if a long‑term key is stolen later, past sessions stay private.\n5. **Handshake finished.** Each side confirms they saw the same transcript and derived the same secrets. They then switch to fast, authenticated encryption (like **AES‑GCM** or **ChaCha20‑Poly1305**) for the rest of the session.\n\n**Example.** A browser visits `https://bank.example`. The server shows its certificate, proves it owns the key, and in roughly one round trip the connection turns fully encrypted for all page views and transfers.\n\n## Certificate Checks (Why the Browser Trusts the Site)\n\nThe client builds a path from the server’s certificate through intermediates to a trusted **root** already on the device. It confirms the exact hostname appears in the **Subject Alternative Name (SAN)**, that the certificate is within its valid dates, and that it’s allowed for **TLS server** use. It also checks **revocation**. Many servers include a stapled **OCSP (Online Certificate Status Protocol)** response—a signed note from the CA saying “this certificate is still good.” If any check fails, the browser warns or blocks.\n\n**Example.** A certificate covering only `api.example.com` and `*.media.example.com` will fail for `login.example.com`. Same company, different name—no match, no trust.\n\n## Binding Tokens So Theft Doesn’t Help\n\nOld browser features for **token binding** were removed, but the goal remains: a stolen token should be useless from another machine. Two modern patterns deliver that:\n\n- **mTLS (mutual TLS).** Bind a token to a **client certificate** at the TLS layer.\n- **DPoP (Demonstrating Proof of Possession).** Bind a token to a **public key** and have the client prove it per request at the application layer.\n\nA niche third option for first‑party apps is binding a session cookie to the TLS **exporter** value (a channel‑specific secret) if your stack exposes it.\n\n## DPoP — Holder‑of‑Key Tokens\n\nThe client generates or holds a key pair (ideally in a secure keystore). When it asks the authorization server for an access token, the server records which **public key** the token belongs to by placing a confirmation value inside the token. On every API call, the client sends a short‑lived, signed **DPoP proof** alongside the token. The proof includes:\n\n- **HTTP method** (htm) and **URL** (htu) of the live request\n- **Issued‑at time** (iat) and a unique **identifier** (jti) to block replay\n- Often a hash of the access token (**ath**) to bind proof to that exact token\n\nThe API validates the signature, checks the public key matches the one bound in the token, enforces method and URL equality, insists the proof is fresh, and rejects any reused identifier.\n\n**Example.** A mobile app calls `GET https://api.example.com/balance` with a fresh DPoP proof. An attacker who copied the token tries `POST https://api.example.com/transfer` from another device: the API rejects it because the proof’s method/URL and key won’t check out.\n\n## mTLS — Certificate‑Bound Tokens\n\nIn **mTLS**, the client presents its own certificate during the TLS handshake. The authorization server binds the access token to that certificate by recording a cryptographic **thumbprint** inside the token. When the client calls the API, the connection must be mTLS, and the API checks that the certificate on the wire matches the thumbprint in the token. If a token is stolen and replayed elsewhere, the call fails because the attacker cannot present the bound client certificate.\n\n**Example.** Service A in a cluster calls Service B using mTLS. The token B sees includes the SHA‑256 thumbprint of A’s certificate. If someone steals that token and tries from a laptop, B rejects it because the laptop lacks A’s cert.\n\n## Limits and Real‑World Defenses\n\nBoth DPoP and mTLS are excellent against **remote token replay**, but neither defeats a fully **compromised endpoint**. Malware may not extract a hardware‑protected key (TPM, Secure Enclave), yet it can still **drive the legitimate app** to use that key (“use‑without‑exfiltration”).\n\nA practical plan is layered and simple:\n\n- Keep **access tokens short‑lived**; rotate refresh tokens.\n- **Bind tokens to the client** (DPoP for browser/native/CDN paths; mTLS for internal services and managed devices).\n- Keep **scopes and audiences tight** to reduce blast radius.\n- Store keys in **hardware keystores** when possible; run with least privilege.\n- For **DPoP**, enforce method/URL match, accept only fresh proofs, and cache recent `jti` values to stop replay.\n- For **mTLS**, require client certs on token‑accepting routes and compare the live cert’s thumbprint to the token.\n- Do the basics: verify issuer, audience, expiry, and scopes on every token.\n- Use TLS everywhere, prefer stapled OCSP, and avoid sensitive actions in **0‑RTT (early data)** which can be replayed.\n- Expect that **XSS** can still misuse tokens in a browser; use strong CSP, Trusted Types, and strict cookie flags.\n- Monitor for anomalies: wrong method/URL combos, fast `jti` reuse, key identifier churn, or tokens arriving at the wrong audience.\n\n**Bottom line.** TLS secures the **connection**; sender‑constrained tokens secure **who can use a token**. Pick DPoP or mTLS based on your clients and network path, accept that local compromise needs separate mitigations, and keep the rest simple: short‑lived tokens, tight scopes, hardware‑backed keys, careful validation, and basic monitoring.",
+  "items": [
+    {
+      "level": "Beginner",
+      "question": "What main problem do DPoP and mTLS address?",
+      "choices": [
+        "HTTP header size limits",
+        "Packet loss on Wi‑Fi",
+        "Remote token replay by another machine",
+        "TLS version downgrade"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Remote token replay by another machine"
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Key usage/EKU?",
+      "choices": [
+        "Issuer must equal hostname",
+        "Certificate is allowed for TLS server authentication.",
+        "Revocation never checked",
+        "Only Common Name matters"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Certificate is allowed for TLS server authentication."
+    },
+    {
+      "level": "Beginner",
+      "question": "What does TLS confidentiality provide?",
+      "choices": [
+        "anonymity",
+        "load balancing",
+        "caching",
+        "Privacy of data"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Privacy of data"
+    },
+    {
+      "level": "Beginner",
+      "question": "What does TLS integrity provide?",
+      "choices": [
+        "anonymity",
+        "load balancing",
+        "Tamper detection",
+        "caching"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Tamper detection"
+    },
+    {
+      "level": "Beginner",
+      "question": "Which cipher types are commonly used as AEAD in TLS 1.3?",
+      "choices": [
+        "AES-CBC or RC4",
+        "AES-GCM or ChaCha20-Poly1305",
+        "DES or SHA-1",
+        "3DES-CBC or MD5"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: AES-GCM or ChaCha20-Poly1305"
+    },
+    {
+      "level": "Beginner",
+      "question": "In TLS 1.3, what happens during 'Server hello'?",
+      "choices": [
+        "Cookies are set",
+        "Server selects settings and sends its key share; most further messages are encrypted.",
+        "DNS is updated",
+        "HTTP compression is negotiated"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Server selects settings and sends its key share; most further messages are encrypted."
+    },
+    {
+      "level": "Beginner",
+      "question": "What does TLS authentication provide?",
+      "choices": [
+        "anonymity",
+        "compression",
+        "Server identity",
+        "caching"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Server identity"
+    },
+    {
+      "level": "Beginner",
+      "question": "In DPoP, what must each API request include?",
+      "choices": [
+        "A QR code",
+        "A short‑lived signed proof with method and URL",
+        "A plain text password",
+        "A static nonce stored in cookies"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: A short‑lived signed proof with method and URL"
+    },
+    {
+      "level": "Beginner",
+      "question": "In TLS 1.3, what happens during 'Client hello'?",
+      "choices": [
+        "HTTP compression is negotiated",
+        "Cookies are set",
+        "Client proposes versions, ciphers, key share, and hostname (SNI).",
+        "DNS is updated"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Client proposes versions, ciphers, key share, and hostname (SNI)."
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Hostname in SAN?",
+      "choices": [
+        "Revocation never checked",
+        "Only Common Name matters",
+        "Requested hostname must appear in Subject Alternative Name.",
+        "Issuer must equal hostname"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Requested hostname must appear in Subject Alternative Name."
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Revocation?",
+      "choices": [
+        "Issuer must equal hostname",
+        "Revocation never checked",
+        "Only Common Name matters",
+        "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Valid chain?",
+      "choices": [
+        "Issuer must equal hostname",
+        "Chain builds to a trusted root CA on the device.",
+        "Revocation never checked",
+        "Only Common Name matters"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Beginner",
+      "question": "In DPoP, what must each API request include?",
+      "choices": [
+        "A QR code",
+        "A short‑lived signed proof with method and URL",
+        "A plain text password",
+        "A static nonce stored in cookies"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: A short‑lived signed proof with method and URL"
+    },
+    {
+      "level": "Beginner",
+      "question": "In DPoP, what must each API request include?",
+      "choices": [
+        "A QR code",
+        "A short‑lived signed proof with method and URL",
+        "A plain text password",
+        "A static nonce stored in cookies"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: A short‑lived signed proof with method and URL"
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Validity window?",
+      "choices": [
+        "Revocation never checked",
+        "Certificate is within not-before / not-after dates.",
+        "Issuer must equal hostname",
+        "Only Common Name matters"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Certificate is within not-before / not-after dates."
+    },
+    {
+      "level": "Beginner",
+      "question": "In TLS 1.3, what happens during 'Keys derived'?",
+      "choices": [
+        "DNS is updated",
+        "HTTP compression is negotiated",
+        "Cookies are set",
+        "Both sides derive symmetric keys from ephemeral Diffie–Hellman (forward secrecy)."
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Both sides derive symmetric keys from ephemeral Diffie–Hellman (forward secrecy)."
+    },
+    {
+      "level": "Beginner",
+      "question": "In TLS 1.3, what happens during 'Handshake finished'?",
+      "choices": [
+        "HTTP compression is negotiated",
+        "Cookies are set",
+        "Each side confirms transcript integrity and switches to fast AEAD encryption.",
+        "DNS is updated"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Each side confirms transcript integrity and switches to fast AEAD encryption."
+    },
+    {
+      "level": "Beginner",
+      "question": "What does TLS integrity provide?",
+      "choices": [
+        "anonymity",
+        "load balancing",
+        "Tamper detection",
+        "caching"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Tamper detection"
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Hostname in SAN?",
+      "choices": [
+        "Revocation never checked",
+        "Only Common Name matters",
+        "Requested hostname must appear in Subject Alternative Name.",
+        "Issuer must equal hostname"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Requested hostname must appear in Subject Alternative Name."
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Hostname in SAN?",
+      "choices": [
+        "Revocation never checked",
+        "Only Common Name matters",
+        "Requested hostname must appear in Subject Alternative Name.",
+        "Issuer must equal hostname"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Requested hostname must appear in Subject Alternative Name."
+    },
+    {
+      "level": "Beginner",
+      "question": "In TLS 1.3, what happens during 'Server proves identity'?",
+      "choices": [
+        "Cookies are set",
+        "Presents certificate chain and proves control of the private key.",
+        "HTTP compression is negotiated",
+        "DNS is updated"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Presents certificate chain and proves control of the private key."
+    },
+    {
+      "level": "Beginner",
+      "question": "In mTLS, what binds the token to the client?",
+      "choices": [
+        "User-agent string",
+        "A thumbprint of the client certificate inside the token",
+        "The client IP address",
+        "A browser cookie name"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: A thumbprint of the client certificate inside the token"
+    },
+    {
+      "level": "Beginner",
+      "question": "Which TLS version simplifies the handshake and enforces forward secrecy?",
+      "choices": [
+        "TLS 1.0",
+        "TLS 1.1",
+        "TLS 1.2",
+        "TLS 1.3"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: TLS 1.3"
+    },
+    {
+      "level": "Beginner",
+      "question": "OCSP stands for what?",
+      "choices": [
+        "Open Certificate Stapling Protocol",
+        "Official Certificate Security Policy",
+        "Online Certificate Signature Procedure",
+        "Online Certificate Status Protocol"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Online Certificate Status Protocol"
+    },
+    {
+      "level": "Beginner",
+      "question": "What certificate check is required: Valid chain?",
+      "choices": [
+        "Issuer must equal hostname",
+        "Chain builds to a trusted root CA on the device.",
+        "Revocation never checked",
+        "Only Common Name matters"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What should be monitored to detect token abuse?",
+      "choices": [
+        "Screen resolution",
+        "Odd method/URL combos, rapid jti reuse, key identifier churn, wrong audience",
+        "Local time zone only",
+        "Browser window size"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Odd method/URL combos, rapid jti reuse, key identifier churn, wrong audience"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "If present, ATH matches the access token",
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Use a global shared key"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: If present, ATH matches the access token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which scenario is a natural fit for mTLS?",
+      "choices": [
+        "Anonymous public content",
+        "Public SPA through a CDN",
+        "Service‑to‑service calls in a mesh with provisioned client certs",
+        "Static asset delivery only"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Service‑to‑service calls in a mesh with provisioned client certs"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Ignore timestamps",
+        "Method and URL match the live request",
+        "Accept any method/URL",
+        "Use a global shared key"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Method and URL match the live request"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Why is SAN checked instead of Common Name?",
+      "choices": [
+        "SAN is optional by spec",
+        "Issuers never sign CN",
+        "Modern clients validate the hostname in SAN; CN alone is deprecated",
+        "CN is always ignored"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Modern clients validate the hostname in SAN; CN alone is deprecated"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What should an API do with DPoP jti values?",
+      "choices": [
+        "Treat them as scopes",
+        "Ignore them",
+        "Cache recent jti values and reject duplicates",
+        "Store them forever"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Cache recent jti values and reject duplicates"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Public key matches the key bound in the token",
+        "Use a global shared key"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Public key matches the key bound in the token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which statement about token scopes and audiences is correct?",
+      "choices": [
+        "Audiences should be ignored",
+        "Scopes are obsolete",
+        "Wide scopes make troubleshooting easier",
+        "Tight scopes/audiences reduce blast radius if a token is misused"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Tight scopes/audiences reduce blast radius if a token is misused"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What is the main limitation of DPoP and mTLS on a compromised client?",
+      "choices": [
+        "They leak keys by default",
+        "Malware can drive the legitimate app to use the key (use‑without‑exfiltration)",
+        "They force password reuse",
+        "They disable TLS"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Malware can drive the legitimate app to use the key (use‑without‑exfiltration)"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "If present, ATH matches the access token",
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Use a global shared key"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: If present, ATH matches the access token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Ignore timestamps",
+        "Issued-at is fresh (allow small skew)",
+        "Accept any method/URL",
+        "Use a global shared key"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Issued-at is fresh (allow small skew)"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which scenario is a natural fit for mTLS?",
+      "choices": [
+        "Anonymous public content",
+        "Public SPA through a CDN",
+        "Service‑to‑service calls in a mesh with provisioned client certs",
+        "Static asset delivery only"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Service‑to‑service calls in a mesh with provisioned client certs"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Ignore timestamps",
+        "Method and URL match the live request",
+        "Accept any method/URL",
+        "Use a global shared key"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Method and URL match the live request"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Public key matches the key bound in the token",
+        "Use a global shared key"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Public key matches the key bound in the token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Public key matches the key bound in the token",
+        "Use a global shared key"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Public key matches the key bound in the token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Why use short‑lived access tokens even with DPoP or mTLS?",
+      "choices": [
+        "To avoid certificate chains",
+        "To limit the window of abuse if something leaks",
+        "To speed up DNS",
+        "To enable IPv6"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: To limit the window of abuse if something leaks"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Public key matches the key bound in the token",
+        "Use a global shared key"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Public key matches the key bound in the token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which scenario is a natural fit for DPoP?",
+      "choices": [
+        "Database replication",
+        "Internal RPC without HTTP",
+        "Offline batch jobs with fixed IPs",
+        "Browser or mobile client calling an API via a TLS‑terminating CDN"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Browser or mobile client calling an API via a TLS‑terminating CDN"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which statement about token scopes and audiences is correct?",
+      "choices": [
+        "Audiences should be ignored",
+        "Scopes are obsolete",
+        "Wide scopes make troubleshooting easier",
+        "Tight scopes/audiences reduce blast radius if a token is misused"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Tight scopes/audiences reduce blast radius if a token is misused"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which scenario is a natural fit for mTLS?",
+      "choices": [
+        "Anonymous public content",
+        "Public SPA through a CDN",
+        "Service‑to‑service calls in a mesh with provisioned client certs",
+        "Static asset delivery only"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Service‑to‑service calls in a mesh with provisioned client certs"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which DPoP fields tie the proof to the live request?",
+      "choices": [
+        "sub and kid",
+        "iss and aud",
+        "alg and typ",
+        "htm (method) and htu (URL)"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: htm (method) and htu (URL)"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which hygiene step reduces replay risk in TLS 1.3 early data?",
+      "choices": [
+        "Disable AEAD",
+        "Avoid sensitive operations in 0‑RTT or require a freshness token",
+        "Use RC4",
+        "Turn off SNI"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Avoid sensitive operations in 0‑RTT or require a freshness token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Ignore timestamps",
+        "Issued-at is fresh (allow small skew)",
+        "Accept any method/URL",
+        "Use a global shared key"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Issued-at is fresh (allow small skew)"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Why is SAN checked instead of Common Name?",
+      "choices": [
+        "SAN is optional by spec",
+        "Issuers never sign CN",
+        "Modern clients validate the hostname in SAN; CN alone is deprecated",
+        "CN is always ignored"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Modern clients validate the hostname in SAN; CN alone is deprecated"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does 'forward secrecy' protect against?",
+      "choices": [
+        "IPv4 exhaustion",
+        "Cookie size overflows",
+        "Decrypting past sessions after long‑term key theft",
+        "Man‑in‑the‑browser"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Decrypting past sessions after long‑term key theft"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "If present, ATH matches the access token",
+        "Accept any method/URL",
+        "Ignore timestamps",
+        "Use a global shared key"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: If present, ATH matches the access token"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What should be monitored to detect token abuse?",
+      "choices": [
+        "Screen resolution",
+        "Odd method/URL combos, rapid jti reuse, key identifier churn, wrong audience",
+        "Local time zone only",
+        "Browser window size"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Odd method/URL combos, rapid jti reuse, key identifier churn, wrong audience"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "What does stapled OCSP provide during the handshake?",
+      "choices": [
+        "Compression parameters",
+        "A DNS response",
+        "A list of ciphers",
+        "Fresh revocation status from the CA"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Fresh revocation status from the CA"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "JTI not seen recently (replay cache)",
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: JTI not seen recently (replay cache)"
+    },
+    {
+      "level": "Intermediate",
+      "question": "Which is a required DPoP verification step?",
+      "choices": [
+        "Use a global shared key",
+        "Ignore timestamps",
+        "Signature valid with the proof’s public key",
+        "Accept any method/URL"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Signature valid with the proof’s public key"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "When rotating DPoP keys, coordinate by?",
+      "choices": [
+        "Turn off iat checks",
+        "Ignore replay caches",
+        "Let clients switch keys without tokens",
+        "Reissuing tokens bound to the new key and aligning replay windows across services"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Reissuing tokens bound to the new key and aligning replay windows across services"
+    },
+    {
+      "level": "Advanced",
+      "question": "Best response when DPoP verification fails at the gateway?",
+      "choices": [
+        "Do not fall back to bearer; reject the request and log details",
+        "Cache the proof forever",
+        "Try random keys",
+        "Silently allow bearer for UX"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Do not fall back to bearer; reject the request and log details"
+    },
+    {
+      "level": "Advanced",
+      "question": "In a mixed environment (CDN + internal mesh), a sensible choice is?",
+      "choices": [
+        "mTLS everywhere including public browsers",
+        "Static passwords in headers",
+        "DPoP for public/browser traffic and mTLS for service‑to‑service calls",
+        "Bearer tokens with no binding"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: DPoP for public/browser traffic and mTLS for service‑to‑service calls"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "A robust DPoP verifier should do which combination?",
+      "choices": [
+        "Accept any alg, ignore time, skip replay cache",
+        "Only check signature, ignore method/URL",
+        "Defer checks to the client",
+        "Validate signature, enforce htm/htu, check iat freshness, reject seen jti, and match token-bound key"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Validate signature, enforce htm/htu, check iat freshness, reject seen jti, and match token-bound key"
+    },
+    {
+      "level": "Advanced",
+      "question": "In mTLS-bound tokens, the API must ensure?",
+      "choices": [
+        "The client IP is the same as last hour",
+        "The cookie name matches the cert",
+        "The TLS version is HTTP/3",
+        "The presented client certificate’s thumbprint matches the token’s recorded thumbprint"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: The presented client certificate’s thumbprint matches the token’s recorded thumbprint"
+    },
+    {
+      "level": "Advanced",
+      "question": "In mTLS-bound tokens, the API must ensure?",
+      "choices": [
+        "The client IP is the same as last hour",
+        "The cookie name matches the cert",
+        "The TLS version is HTTP/3",
+        "The presented client certificate’s thumbprint matches the token’s recorded thumbprint"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: The presented client certificate’s thumbprint matches the token’s recorded thumbprint"
+    },
+    {
+      "level": "Advanced",
+      "question": "A channel-binding approach based on TLS exporter requires?",
+      "choices": [
+        "Turning off AEAD",
+        "Access to the exporter value end-to-end or secure propagation from the terminator",
+        "Disabling proxies entirely",
+        "Pinning to IP addresses"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Access to the exporter value end-to-end or secure propagation from the terminator"
+    },
+    {
+      "level": "Advanced",
+      "question": "Best response when DPoP verification fails at the gateway?",
+      "choices": [
+        "Do not fall back to bearer; reject the request and log details",
+        "Cache the proof forever",
+        "Try random keys",
+        "Silently allow bearer for UX"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Do not fall back to bearer; reject the request and log details"
+    },
+    {
+      "level": "Advanced",
+      "question": "A channel-binding approach based on TLS exporter requires?",
+      "choices": [
+        "Turning off AEAD",
+        "Access to the exporter value end-to-end or secure propagation from the terminator",
+        "Disabling proxies entirely",
+        "Pinning to IP addresses"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Access to the exporter value end-to-end or secure propagation from the terminator"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "When rotating DPoP keys, coordinate by?",
+      "choices": [
+        "Turn off iat checks",
+        "Ignore replay caches",
+        "Let clients switch keys without tokens",
+        "Reissuing tokens bound to the new key and aligning replay windows across services"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Reissuing tokens bound to the new key and aligning replay windows across services"
+    },
+    {
+      "level": "Advanced",
+      "question": "A realistic local malware threat to plan for is?",
+      "choices": [
+        "Universal key extraction from TPMs",
+        "TLS ciphers auto-downgrade",
+        "Use‑without‑exfiltration: malware triggers valid proofs/calls and harvests responses",
+        "Certificate chains vanish"
+      ],
+      "answerIndex": 2,
+      "explanation": "Correct: Use‑without‑exfiltration: malware triggers valid proofs/calls and harvests responses"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "A channel-binding approach based on TLS exporter requires?",
+      "choices": [
+        "Turning off AEAD",
+        "Access to the exporter value end-to-end or secure propagation from the terminator",
+        "Disabling proxies entirely",
+        "Pinning to IP addresses"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Access to the exporter value end-to-end or secure propagation from the terminator"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "In mTLS-bound tokens, the API must ensure?",
+      "choices": [
+        "The client IP is the same as last hour",
+        "The cookie name matches the cert",
+        "The TLS version is HTTP/3",
+        "The presented client certificate’s thumbprint matches the token’s recorded thumbprint"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: The presented client certificate’s thumbprint matches the token’s recorded thumbprint"
+    },
+    {
+      "level": "Advanced",
+      "question": "When rotating DPoP keys, coordinate by?",
+      "choices": [
+        "Turn off iat checks",
+        "Ignore replay caches",
+        "Let clients switch keys without tokens",
+        "Reissuing tokens bound to the new key and aligning replay windows across services"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Reissuing tokens bound to the new key and aligning replay windows across services"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "A channel-binding approach based on TLS exporter requires?",
+      "choices": [
+        "Turning off AEAD",
+        "Access to the exporter value end-to-end or secure propagation from the terminator",
+        "Disabling proxies entirely",
+        "Pinning to IP addresses"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Access to the exporter value end-to-end or secure propagation from the terminator"
+    },
+    {
+      "level": "Advanced",
+      "question": "A channel-binding approach based on TLS exporter requires?",
+      "choices": [
+        "Turning off AEAD",
+        "Access to the exporter value end-to-end or secure propagation from the terminator",
+        "Disabling proxies entirely",
+        "Pinning to IP addresses"
+      ],
+      "answerIndex": 1,
+      "explanation": "Correct: Access to the exporter value end-to-end or secure propagation from the terminator"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    },
+    {
+      "level": "Advanced",
+      "question": "When rotating DPoP keys, coordinate by?",
+      "choices": [
+        "Turn off iat checks",
+        "Ignore replay caches",
+        "Let clients switch keys without tokens",
+        "Reissuing tokens bound to the new key and aligning replay windows across services"
+      ],
+      "answerIndex": 3,
+      "explanation": "Correct: Reissuing tokens bound to the new key and aligning replay windows across services"
+    },
+    {
+      "level": "Advanced",
+      "question": "Why should 0‑RTT be avoided for sensitive operations?",
+      "choices": [
+        "Early data can be replayed; sensitive actions should require fresh, non-replayable proof",
+        "It disables OCSP stapling",
+        "It breaks SNI",
+        "It increases latency"
+      ],
+      "answerIndex": 0,
+      "explanation": "Correct: Early data can be replayed; sensitive actions should require fresh, non-replayable proof"
+    }
+  ],
+  "anki": [
+    {
+      "level": "Beginner",
+      "front": "Why do short‑lived access tokens matter?",
+      "back": "They limit the window of abuse if a token leaks."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Keys derived'?",
+      "back": "Both sides derive symmetric keys from ephemeral Diffie–Hellman (forward secrecy)."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Server hello'?",
+      "back": "Server selects settings and sends its key share; most further messages are encrypted."
+    },
+    {
+      "level": "Beginner",
+      "front": "Name two AEAD suites common in TLS 1.3.?",
+      "back": "AES‑GCM and ChaCha20‑Poly1305."
+    },
+    {
+      "level": "Beginner",
+      "front": "Define token audience and scope briefly.?",
+      "back": "Audience: which service the token is for; Scope: what actions are permitted."
+    },
+    {
+      "level": "Beginner",
+      "front": "In TLS, define integrity.?",
+      "back": "Detects tampering in transit."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Keys derived'?",
+      "back": "Both sides derive symmetric keys from ephemeral Diffie–Hellman (forward secrecy)."
+    },
+    {
+      "level": "Beginner",
+      "front": "Define token audience and scope briefly.?",
+      "back": "Audience: which service the token is for; Scope: what actions are permitted."
+    },
+    {
+      "level": "Beginner",
+      "front": "In TLS, define confidentiality.?",
+      "back": "Keeps data private in transit."
+    },
+    {
+      "level": "Beginner",
+      "front": "Define token audience and scope briefly.?",
+      "back": "Audience: which service the token is for; Scope: what actions are permitted."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Keys derived'?",
+      "back": "Both sides derive symmetric keys from ephemeral Diffie–Hellman (forward secrecy)."
+    },
+    {
+      "level": "Beginner",
+      "front": "Why do short‑lived access tokens matter?",
+      "back": "They limit the window of abuse if a token leaks."
+    },
+    {
+      "level": "Beginner",
+      "front": "What problem do DPoP and mTLS solve?",
+      "back": "Remote token replay: they make a stolen token useless on another machine."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Handshake finished'?",
+      "back": "Each side confirms transcript integrity and switches to fast AEAD encryption."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Handshake finished'?",
+      "back": "Each side confirms transcript integrity and switches to fast AEAD encryption."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Handshake finished'?",
+      "back": "Each side confirms transcript integrity and switches to fast AEAD encryption."
+    },
+    {
+      "level": "Beginner",
+      "front": "In TLS, define confidentiality.?",
+      "back": "Keeps data private in transit."
+    },
+    {
+      "level": "Beginner",
+      "front": "Name two AEAD suites common in TLS 1.3.?",
+      "back": "AES‑GCM and ChaCha20‑Poly1305."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Client hello'?",
+      "back": "Client proposes versions, ciphers, key share, and hostname (SNI)."
+    },
+    {
+      "level": "Beginner",
+      "front": "Why do short‑lived access tokens matter?",
+      "back": "They limit the window of abuse if a token leaks."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Server proves identity'?",
+      "back": "Presents certificate chain and proves control of the private key."
+    },
+    {
+      "level": "Beginner",
+      "front": "TLS 1.3: what happens in 'Handshake finished'?",
+      "back": "Each side confirms transcript integrity and switches to fast AEAD encryption."
+    },
+    {
+      "level": "Beginner",
+      "front": "What problem do DPoP and mTLS solve?",
+      "back": "Remote token replay: they make a stolen token useless on another machine."
+    },
+    {
+      "level": "Beginner",
+      "front": "In TLS, define authentication.?",
+      "back": "Proves the peer’s identity."
+    },
+    {
+      "level": "Beginner",
+      "front": "Bottom line summary?",
+      "back": "TLS secures the connection; sender‑constrained tokens secure who can use a token; layer defenses."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Validity window.?",
+      "back": "Certificate is within not-before / not-after dates."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Explain forward secrecy in one line.?",
+      "back": "Past sessions stay private even if a long‑term key is stolen later."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name key DPoP server checks.?",
+      "back": "Valid signature, key matches token, method/URL match, fresh iat, no jti replay, ath matches token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Validity window.?",
+      "back": "Certificate is within not-before / not-after dates."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Summarize mTLS-bound token checking.?",
+      "back": "Require client cert; match presented cert thumbprint to the one recorded in the token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Validity window.?",
+      "back": "Certificate is within not-before / not-after dates."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Summarize mTLS-bound token checking.?",
+      "back": "Require client cert; match presented cert thumbprint to the one recorded in the token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Explain forward secrecy in one line.?",
+      "back": "Past sessions stay private even if a long‑term key is stolen later."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Revocation.?",
+      "back": "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Validity window.?",
+      "back": "Certificate is within not-before / not-after dates."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name key DPoP server checks.?",
+      "back": "Valid signature, key matches token, method/URL match, fresh iat, no jti replay, ath matches token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name key DPoP server checks.?",
+      "back": "Valid signature, key matches token, method/URL match, fresh iat, no jti replay, ath matches token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "What does OCSP stand for and why is it used?",
+      "back": "Online Certificate Status Protocol; proves the certificate is not revoked."
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to pick DPoP vs mTLS?",
+      "back": "DPoP for browser/native/CDN paths; mTLS for service‑to‑service and managed fleets."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name key DPoP server checks.?",
+      "back": "Valid signature, key matches token, method/URL match, fresh iat, no jti replay, ath matches token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Explain forward secrecy in one line.?",
+      "back": "Past sessions stay private even if a long‑term key is stolen later."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Revocation.?",
+      "back": "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Intermediate",
+      "front": "What does a TPM/Secure Enclave help with?",
+      "back": "Keeps private keys non‑exportable; raises the bar for theft."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name two XSS mitigations relevant to token safety.?",
+      "back": "Content Security Policy and Trusted Types (plus HttpOnly/SameSite/Secure cookies)."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name two XSS mitigations relevant to token safety.?",
+      "back": "Content Security Policy and Trusted Types (plus HttpOnly/SameSite/Secure cookies)."
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to pick DPoP vs mTLS?",
+      "back": "DPoP for browser/native/CDN paths; mTLS for service‑to‑service and managed fleets."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Summarize mTLS-bound token checking.?",
+      "back": "Require client cert; match presented cert thumbprint to the one recorded in the token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Key usage/EKU.?",
+      "back": "Certificate is allowed for TLS server authentication."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Revocation.?",
+      "back": "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Revocation.?",
+      "back": "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to pick DPoP vs mTLS?",
+      "back": "DPoP for browser/native/CDN paths; mTLS for service‑to‑service and managed fleets."
+    },
+    {
+      "level": "Intermediate",
+      "front": "What does a TPM/Secure Enclave help with?",
+      "back": "Keeps private keys non‑exportable; raises the bar for theft."
+    },
+    {
+      "level": "Intermediate",
+      "front": "What does a TPM/Secure Enclave help with?",
+      "back": "Keeps private keys non‑exportable; raises the bar for theft."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Summarize mTLS-bound token checking.?",
+      "back": "Require client cert; match presented cert thumbprint to the one recorded in the token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Revocation.?",
+      "back": "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Revocation.?",
+      "back": "Stapled OCSP (Online Certificate Status Protocol) or CRL considered."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Hostname in SAN.?",
+      "back": "Requested hostname must appear in Subject Alternative Name."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Key usage/EKU.?",
+      "back": "Certificate is allowed for TLS server authentication."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Hostname in SAN.?",
+      "back": "Requested hostname must appear in Subject Alternative Name."
+    },
+    {
+      "level": "Intermediate",
+      "front": "List the core fields in a DPoP proof.?",
+      "back": "htm, htu, iat, jti, and often ath."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name two XSS mitigations relevant to token safety.?",
+      "back": "Content Security Policy and Trusted Types (plus HttpOnly/SameSite/Secure cookies)."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Explain forward secrecy in one line.?",
+      "back": "Past sessions stay private even if a long‑term key is stolen later."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Summarize mTLS-bound token checking.?",
+      "back": "Require client cert; match presented cert thumbprint to the one recorded in the token."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Name two XSS mitigations relevant to token safety.?",
+      "back": "Content Security Policy and Trusted Types (plus HttpOnly/SameSite/Secure cookies)."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Key usage/EKU.?",
+      "back": "Certificate is allowed for TLS server authentication."
+    },
+    {
+      "level": "Intermediate",
+      "front": "Certificate check: Valid chain.?",
+      "back": "Chain builds to a trusted root CA on the device."
+    },
+    {
+      "level": "Advanced",
+      "front": "Why avoid sensitive operations in 0‑RTT?",
+      "back": "Early data can be replayed; require freshness or avoid 0‑RTT for sensitive actions."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "Why avoid sensitive operations in 0‑RTT?",
+      "back": "Early data can be replayed; require freshness or avoid 0‑RTT for sensitive actions."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "Why don’t DPoP/mTLS defeat local compromise?",
+      "back": "Malware can drive the legitimate app to use the key (use‑without‑exfiltration)."
+    },
+    {
+      "level": "Advanced",
+      "front": "Why avoid sensitive operations in 0‑RTT?",
+      "back": "Early data can be replayed; require freshness or avoid 0‑RTT for sensitive actions."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "Why avoid sensitive operations in 0‑RTT?",
+      "back": "Early data can be replayed; require freshness or avoid 0‑RTT for sensitive actions."
+    },
+    {
+      "level": "Advanced",
+      "front": "Give one channel-binding option without browser token binding.?",
+      "back": "Bind a session cookie to the TLS exporter value in managed environments."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "Give one channel-binding option without browser token binding.?",
+      "back": "Bind a session cookie to the TLS exporter value in managed environments."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "What should logs capture for investigations?",
+      "back": "DPoP jti values, method/URL, key identifiers, audience mismatches, verification failures."
+    },
+    {
+      "level": "Advanced",
+      "front": "Why avoid sensitive operations in 0‑RTT?",
+      "back": "Early data can be replayed; require freshness or avoid 0‑RTT for sensitive actions."
+    }
+  ],
+  "cloze": [
+    {
+      "level": "Beginner",
+      "prompt": "TLS core property",
+      "cloze": "TLS core property: {{confidentiality}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Server hello}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Handshake finished}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Handshake finished}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS core property",
+      "cloze": "TLS core property: {{integrity}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Keys derived}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Handshake finished}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Handshake finished}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "Two AEAD algorithms: AES‑GCM and",
+      "cloze": "Two AEAD algorithms: AES‑GCM and: {{ChaCha20‑Poly1305}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "Certificate hostname check field",
+      "cloze": "Certificate hostname check field: {{SAN}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Handshake finished}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Server proves identity}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS core property",
+      "cloze": "TLS core property: {{authentication}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS core property",
+      "cloze": "TLS core property: {{integrity}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS AEAD example",
+      "cloze": "TLS AEAD example: {{AES‑GCM}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS AEAD example",
+      "cloze": "TLS AEAD example: {{AES‑GCM}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Handshake finished}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Client hello}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS proves server identity with",
+      "cloze": "TLS proves server identity with: {{a certificate chain}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Client hello}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "OCSP expands to",
+      "cloze": "OCSP expands to: {{Online Certificate Status Protocol}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Client hello}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS AEAD example",
+      "cloze": "TLS AEAD example: {{AES‑GCM}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS handshake step name",
+      "cloze": "TLS handshake step name: {{Keys derived}}"
+    },
+    {
+      "level": "Beginner",
+      "prompt": "TLS AEAD example",
+      "cloze": "TLS AEAD example: {{AES‑GCM}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes method claim",
+      "cloze": "DPoP proof includes method claim: {{htm}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes method claim",
+      "cloze": "DPoP proof includes method claim: {{htm}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Audience restricts which",
+      "cloze": "Audience restricts which: {{service the token targets}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes URL claim",
+      "cloze": "DPoP proof includes URL claim: {{htu}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Scopes restrict which",
+      "cloze": "Scopes restrict which: {{actions are permitted}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes method claim",
+      "cloze": "DPoP proof includes method claim: {{htm}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "mTLS binds tokens using cert",
+      "cloze": "mTLS binds tokens using cert: {{thumbprint}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Revocation check via stapled",
+      "cloze": "Revocation check via stapled: {{OCSP}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Scopes restrict which",
+      "cloze": "Scopes restrict which: {{actions are permitted}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Scopes restrict which",
+      "cloze": "Scopes restrict which: {{actions are permitted}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Short‑lived tokens reduce",
+      "cloze": "Short‑lived tokens reduce: {{window of abuse}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes URL claim",
+      "cloze": "DPoP proof includes URL claim: {{htu}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes URL claim",
+      "cloze": "DPoP proof includes URL claim: {{htu}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Short‑lived tokens reduce",
+      "cloze": "Short‑lived tokens reduce: {{window of abuse}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Forward secrecy relies on",
+      "cloze": "Forward secrecy relies on: {{ephemeral Diffie–Hellman}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "mTLS binds tokens using cert",
+      "cloze": "mTLS binds tokens using cert: {{thumbprint}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes method claim",
+      "cloze": "DPoP proof includes method claim: {{htm}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Optional DPoP token hash field",
+      "cloze": "Optional DPoP token hash field: {{ath}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Forward secrecy relies on",
+      "cloze": "Forward secrecy relies on: {{ephemeral Diffie–Hellman}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP freshness timestamp",
+      "cloze": "DPoP freshness timestamp: {{iat}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Forward secrecy relies on",
+      "cloze": "Forward secrecy relies on: {{ephemeral Diffie–Hellman}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Audience restricts which",
+      "cloze": "Audience restricts which: {{service the token targets}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Audience restricts which",
+      "cloze": "Audience restricts which: {{service the token targets}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes method claim",
+      "cloze": "DPoP proof includes method claim: {{htm}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes method claim",
+      "cloze": "DPoP proof includes method claim: {{htm}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Sender‑constrained tokens stop",
+      "cloze": "Sender‑constrained tokens stop: {{remote token replay}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Forward secrecy relies on",
+      "cloze": "Forward secrecy relies on: {{ephemeral Diffie–Hellman}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "XSS mitigated with",
+      "cloze": "XSS mitigated with: {{Content Security Policy}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP freshness timestamp",
+      "cloze": "DPoP freshness timestamp: {{iat}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Sender‑constrained tokens stop",
+      "cloze": "Sender‑constrained tokens stop: {{remote token replay}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP freshness timestamp",
+      "cloze": "DPoP freshness timestamp: {{iat}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes URL claim",
+      "cloze": "DPoP proof includes URL claim: {{htu}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "mTLS binds tokens using cert",
+      "cloze": "mTLS binds tokens using cert: {{thumbprint}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP replay control identifier",
+      "cloze": "DPoP replay control identifier: {{jti}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP freshness timestamp",
+      "cloze": "DPoP freshness timestamp: {{iat}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Early data also called",
+      "cloze": "Early data also called: {{0‑RTT}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Early data also called",
+      "cloze": "Early data also called: {{0‑RTT}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "Hostname must appear in certificate",
+      "cloze": "Hostname must appear in certificate: {{Subject Alternative Name (SAN)}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP freshness timestamp",
+      "cloze": "DPoP freshness timestamp: {{iat}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "DPoP proof includes URL claim",
+      "cloze": "DPoP proof includes URL claim: {{htu}}"
+    },
+    {
+      "level": "Intermediate",
+      "prompt": "mTLS binds tokens using cert",
+      "cloze": "mTLS binds tokens using cert: {{thumbprint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Monitor for rapid reuse of",
+      "cloze": "Monitor for rapid reuse of: {{jti}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Local compromise limitation",
+      "cloze": "Local compromise limitation: {{use‑without‑exfiltration}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Local compromise limitation",
+      "cloze": "Local compromise limitation: {{use‑without‑exfiltration}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Local compromise limitation",
+      "cloze": "Local compromise limitation: {{use‑without‑exfiltration}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Cookie channel binding uses TLS",
+      "cloze": "Cookie channel binding uses TLS: {{exporter}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "DPoP and mTLS do not defeat",
+      "cloze": "DPoP and mTLS do not defeat: {{a fully compromised endpoint}}"
+    },
+    {
+      "level": "Advanced",
+      "prompt": "Local compromise limitation",
+      "cloze": "Local compromise limitation: {{use‑without‑exfiltration}}"
+    }
+  ],
+  "meta": {
+    "topic": "Token Protection: TLS, DPoP, mTLS — study pack",
+    "counts": {
+      "items": {
+        "Beginner": 25,
+        "Intermediate": 50,
+        "Advanced": 25
+      },
+      "anki": {
+        "Beginner": 25,
+        "Intermediate": 50,
+        "Advanced": 25
+      },
+      "cloze": {
+        "Beginner": 25,
+        "Intermediate": 50,
+        "Advanced": 25
+      }
+    }
+  }
+}
