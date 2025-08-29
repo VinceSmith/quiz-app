@@ -47,6 +47,8 @@ const state = {
   sourceAnki: [],  // Anki
   sourceCloze: [], // Cloze
   writeupMarkdown: '',
+  // When true, difficulty selection UI should be disabled (e.g., subject uses level: 'None')
+  levelsDisabled: false,
   // breakdown counts
   tally: {
     Beginner: { right: 0, wrong: 0 },
@@ -111,6 +113,10 @@ async function loadSubject(slug) {
   // write-up: support either `writeup`, `paper_markdown`, or `paper` fields
   state.writeupMarkdown = (json.writeup || json.paper_markdown || json.paper || '').toString();
   renderWriteup();
+  // Disable difficulty selector if every card uses level: 'None'
+  const combined = [].concat(items || [], anki || [], cloze || []).filter(Boolean);
+  state.levelsDisabled = combined.length > 0 && combined.every(c => String(c.level || '').toLowerCase() === 'none');
+  updateDifficultyUI();
 }
 
 // Minimal Markdown -> HTML (headings, emphasis, code ticks, lists, paragraphs)
@@ -170,10 +176,27 @@ function renderWriteup() {
   els.writeupField.classList.toggle('hidden', !has);
   if (!has) {
     if (els.subjectWriteup) els.subjectWriteup.innerHTML = '';
+    // If no writeup, still ensure difficulty UI reflects content
+    updateDifficultyUI();
     return;
   }
   if (els.subjectWriteup) {
     els.subjectWriteup.innerHTML = mdToHtml(state.writeupMarkdown);
+  }
+}
+
+// Update the difficulty selector UI based on state.levelsDisabled
+function updateDifficultyUI() {
+  if (!els.difficultyChips) return;
+  const chips = els.difficultyChips.querySelectorAll('.chip');
+  chips.forEach(ch => {
+    ch.disabled = !!state.levelsDisabled;
+    ch.classList.toggle('disabled', !!state.levelsDisabled);
+  });
+  if (state.levelsDisabled) {
+    // Force Mix selection when disabled
+    state.selectedDifficulty = 'Mix';
+    chips.forEach(c => c.classList.toggle('selected', c.dataset.level === 'Mix'));
   }
 }
 
@@ -648,7 +671,7 @@ function retrySameSettings() {
 // Wire UI
 els.difficultyChips.addEventListener('click', (e) => {
   const btn = e.target.closest('.chip');
-  if (!btn) return;
+  if (!btn || btn.disabled) return;
   els.difficultyChips.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
   btn.classList.add('selected');
 });

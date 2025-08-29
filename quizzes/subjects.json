@@ -9,6 +9,11 @@
       "slug": "token-protection",
   "name": "TLS, DPoP, and mTLS",
   "file": "quizzes/tls-dpop-mtls.json"
+    },
+    {
+      "slug": "entra-identity-platform",
+      "name": "Microsoft identity platform (Entra ID)",
+      "file": "quizzes/entra-identity-platform.json"
     }
   ]
 }

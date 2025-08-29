@@ -1,0 +1,1558 @@
+{
+  "title": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers",
+  "writeup": "# Anki Deck: Microsoft identity platform (Entra ID) — Developer-depth for Product Managers\n\nThis deck is designed for an expert PM with intermediate identity knowledge who wants developer-level depth on Microsoft identity platform (Entra ID). Cards are based on the structure and content of the docs in `MicrosoftDocs/entra-docs` under `docs/identity-platform` (and Learn landing pages). Each note is tagged with hierarchical tags you can map to subdecks.\n\n- Import file: `anki-entra-identity-platform.tsv`\n- Note type: Basic (front/back)\n- Fields: Front (Question/Prompt) \\t Back (Answer) \\t Tags\n- Tags: `entra/*` with nested topic paths matching doc areas (e.g., `entra/protocols/oidc`, `entra/tokens/access`, `entra/apps/app-model`).\n\n## Import instructions\n1. In Anki, File > Import… and select `anki-entra-identity-platform.tsv`.\n2. Type: Basic; Delimiter: Tab; Allow HTML: On; Deck: Choose a deck (you can later move by tag into subdecks).\n3. After import, create Anki filtered decks or subdecks using tags (e.g., select tag `entra/protocols/*`).\n\n## Topic outline (maps to tags)\n- entra/overview\n- entra/app-model\n- entra/protocols\n  - entra/protocols/oidc\n  - entra/protocols/oauth2/auth-code\n  - entra/protocols/oauth2/device-code\n  - entra/protocols/oauth2/obo\n  - entra/protocols/oauth2/client-credentials\n  - entra/protocols/oauth2/ropc (caveats)\n  - entra/protocols/saml\n- entra/tokens\n  - entra/tokens/id\n  - entra/tokens/access\n  - entra/tokens/refresh\n  - entra/tokens/claims\n  - entra/tokens/lifetimes\n  - entra/tokens/validation\n- entra/consent-permissions\n- entra/tenancy\n- entra/endpoints-metadata\n- entra/msal\n- entra/security-resilience\n- entra/troubleshooting\n\nNotes\n- This deck is educational. Always verify specifics (parameter names, endpoints, constraints) in the official docs for your environment/tenant cloud.\n- Some items include short “why it matters” context to aid retention.",
+  "source": "anki-entra-identity-platform.tsv",
+  "anki": [
+    {
+      "level": "Intermediate",
+      "front": "What is the Microsoft identity platform (high level)?",
+      "back": "A set of endpoints, libraries (MSAL), and tooling in Microsoft Entra ID that lets apps authenticate users (OIDC) and acquire tokens (OAuth 2.0) to call protected APIs like Microsoft Graph or your own. Key pillars: app registrations, protocols, tokens, consent/permissions, and libraries.",
+      "tags": [
+        "entra/overview"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which app objects exist in Entra ID for an application integration?",
+      "back": "Two core objects: Application object (global, tenant-agnostic definition of app, app roles, permissions, redirect URIs) and Service principal (tenant-local instance used for policy, consent, assignment). SPs exist per tenant where the app is used.",
+      "tags": [
+        "entra/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What determines whether an access token is intended for your API?",
+      "back": "The audience (aud) claim must match your API’s App ID URI (or application ID URI). Your API must validate aud and other claims; clients should treat access tokens as opaque.",
+      "tags": [
+        "entra/tokens/access",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What’s the difference between v1.0 and v2.0 tokens?",
+      "back": "v1.0 vs v2.0 control claim formats and audiences; selected by the resource via accessTokenAcceptedVersion in the app manifest: null/1 => v1.0, 2 => v2.0. You can get a v2 token from the v1 endpoint if the resource accepts v2.",
+      "tags": [
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Default access token lifetime and why it varies?",
+      "back": "Typically randomized between 60–90 minutes to spread load and improve resilience. CAE/SIF and CTL can influence effective behavior; clients use refresh tokens to renew.",
+      "tags": [
+        "entra/tokens/lifetimes",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When should a client validate an access token?",
+      "back": "Clients generally shouldn’t. Access tokens are for APIs to validate. Clients should cache by using expires_in and scope from the token response and avoid parsing tokens.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What must a web API validate on access tokens?",
+      "back": "Signature (via OIDC jwks_uri), issuer (iss), audience (aud), expiration (exp/nbf), and tenant scoping (tid). Use tenant-specific or tenant-independent metadata with issuer rules; handle key rollover.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What’s the well-known OIDC configuration URL pattern?",
+      "back": "{authority}/.well-known/openid-configuration (for v2: {authority}/v2.0/.well-known/openid-configuration). Example: https://login.microsoftonline.com/common/v2.0/.well-known/openid-configuration.",
+      "tags": [
+        "entra/endpoints-metadata",
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you enable ID tokens for an app?",
+      "back": "In App registrations > Authentication: add platform and select “ID tokens” (implicit and hybrid flows), or set oauth2AllowIdTokenImplicitFlow=true in the manifest (legacy). Without it, requesting id_token yields unsupported_response error.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which OIDC request params are required for sign-in?",
+      "back": "response_type=id_token, scope=openid, nonce=... Plus tenant-specific authority, client_id, redirect_uri, response_mode (form_post recommended for web apps), and state.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is nonce in OIDC and how is it used?",
+      "back": "A cryptographically random string the client generates and sends; the ID token includes the same nonce. The client must verify it to prevent replay.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Where is the OIDC UserInfo endpoint in Entra?",
+      "back": "userinfo_endpoint is exposed via the OIDC configuration; for Entra it’s hosted on Microsoft Graph at https://graph.microsoft.com/oidc/userinfo. Request a token with openid profile email to call it.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you sign a user out?",
+      "back": "1) Redirect to end_session_endpoint (logout) with optional post_logout_redirect_uri; 2) Clear your app’s session/cookies. For single sign-out, implement front-channel logout URL and respond 200 after clearing sessions.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What apps should use the OAuth 2.0 auth code flow with PKCE?",
+      "back": "SPAs (with spa redirect type + CORS), server-side web apps, desktop and mobile apps. Avoid implicit; use code+PKCE for modern clients.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why does a SPA need the ‘spa’ redirect URI type?",
+      "back": "To allow cross-origin token redemption and CORS at the token endpoint. Without it, you’ll see CORS errors; SPAs must not use client secrets.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which parameters are key in the /authorize request (auth code flow)?",
+      "back": "client_id, response_type=code (optionally id_token for hybrid), redirect_uri, response_mode, scope (can span multiple resources), state, PKCE parameters (code_challenge, code_challenge_method=S256), and optional prompt/login_hint/domain_hint.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the hybrid flow in Entra ID?",
+      "back": "Requesting an ID token along with the authorization code (response_type=code id_token), adding OIDC scopes and nonce. Useful to render UI while redeeming code server-side.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When redeeming the auth code at /token, what must you send?",
+      "back": "client_id, grant_type=authorization_code, code, redirect_uri (must match), code_verifier (if PKCE used—recommended/required for SPAs), plus client_secret or client_assertion only for confidential clients.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Best practice: client secret vs certificate for confidential clients?",
+      "back": "Prefer certificate credentials (private_key_jwt) over shared secrets for stronger security and rotation. Register cert in app registration and send client_assertion JWT at /token.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is Continuous Access Evaluation (CAE)?",
+      "back": "A capability that evaluates access in near real-time; token lifetime variation still applies. Apps should handle mid-flight challenges and rely on libraries (MSAL) for resiliency.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/tokens/lifetimes"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Refresh tokens behavior and 24h limit for SPAs?",
+      "back": "SPAs get refresh tokens expiring ~24 hours; require interactive renewal daily due to third-party cookie privacy. Other app types get longer-lived RTs, but expect rotation and invalidation.",
+      "tags": [
+        "entra/tokens/refresh",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "On-behalf-of (OBO) flow: when and why?",
+      "back": "Used by a web API to exchange a user’s incoming token for a downstream API token, preserving user identity/delegation across tiers. Initiated at /token with grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer.",
+      "tags": [
+        "entra/protocols/oauth2/obo"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Client credentials flow: when to use?",
+      "back": "For daemon/background or server-to-server scenarios without user context. The app uses its own identity to get tokens for APIs that expose application permissions (app roles).",
+      "tags": [
+        "entra/protocols/oauth2/client-credentials"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Device code flow: when to use?",
+      "back": "For devices with limited input (TVs, CLI). User authenticates on a secondary device. Pair with PKCE-capable libs when possible; avoid embedding secrets.",
+      "tags": [
+        "entra/protocols/oauth2/device-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "ROPC: should you use it?",
+      "back": "Avoid. Resource Owner Password Credentials is discouraged due to UX and security; lacks modern controls and breaks federated flows. Prefer auth code with PKCE or device code.",
+      "tags": [
+        "entra/protocols/oauth2/ropc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are optional claims and how are they used?",
+      "back": "API/resource can request extra claims in tokens (e.g., upn, groups) via optional claims configuration; client requests scopes, resource controls claim issuance.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to add custom claims?",
+      "back": "Use custom claims mapping or custom extensions; for complex cases, custom claims providers or API enrichment. Be mindful of token size limits and privacy.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which errors are common at /authorize?",
+      "back": "invalid_request, unauthorized_client, access_denied, unsupported_response_type, server_error, temporarily_unavailable, invalid_resource, login_required, interaction_required. Client action varies: fix params, request consent, or retry.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which errors are common at /token?",
+      "back": "invalid_request, invalid_grant, unauthorized_client, invalid_client, unsupported_grant_type, invalid_resource, interaction_required, temporarily_unavailable, consent_required, invalid_scope. Inspect error_description, trace_id, correlation_id.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you validate token signatures and keys?",
+      "back": "Use OIDC metadata’s jwks_uri; select key by kid, validate RS256 signature; auto-refresh keys daily. If custom signing keys (claims-mapping), use appid parameter to fetch correct jwks.",
+      "tags": [
+        "entra/tokens/validation",
+        "entra/endpoints-metadata"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Issuer validation for multi-tenant apps?",
+      "back": "When using common/organizations authority, replace {tenantid} template with token tid and compare to iss; also ensure tid is a GUID; validate signing key issuer matches.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the difference between consent and permission?",
+      "back": "Permissions/scopes define what access is requested. Consent is the user/admin approving those permissions for a client app. Delegated permissions require a user; application permissions require admin consent.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What’s the ‘signInAudience’ and why does it matter?",
+      "back": "It defines who can sign in: AzureADMyOrg, AzureADMultipleOrgs, AzureADandPersonalMicrosoftAccount, etc. Must align with endpoints used (common/organizations/consumers) and app’s audience.",
+      "tags": [
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "National cloud considerations?",
+      "back": "Authority and endpoints vary per cloud (Azure public, GCC, GCC High, China). Use correct base domain (login.microsoftonline.com vs login.chinacloudapi.cn). Configure libraries appropriately.",
+      "tags": [
+        "entra/endpoints-metadata"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Scopes in OIDC vs OAuth 2.0?",
+      "back": "openid/profile/email are OIDC identity scopes; resource scopes like https://graph.microsoft.com/User.Read are OAuth 2.0 permissions. Include openid for ID tokens; include resource scopes for API access.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to use response_mode=form_post?",
+      "back": "For web apps to securely receive tokens/codes on server-side; avoids fragment issues where browsers don’t send fragment to server.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Front-channel logout: what must apps do?",
+      "back": "Register the front-channel logout URL and implement an endpoint that clears sessions and returns 200 upon GET from Entra during single sign-out.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Handling groups in tokens?",
+      "back": "Use group overage claims (hasgroups) and Graph calls for large memberships; consider using app roles/role assignments to avoid large token size.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "MSAL vs hand-rolled protocol calls?",
+      "back": "Prefer MSAL for correctness (PKCE, CAE, caching, retries). Hand-rolled calls are for reference/testing only; production should use MSAL or Microsoft.Identity.Web.",
+      "tags": [
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What data should a client cache from token responses?",
+      "back": "expires_in, scope, refresh_token (if present), and id_token (if needed for UX claims). Don’t parse access token; treat as opaque.",
+      "tags": [
+        "entra/tokens/access",
+        "entra/tokens/refresh"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What’s audience (aud) vs scope in access tokens?",
+      "back": "Aud identifies the resource API; scope lists permissions granted on that token for that resource. APIs enforce authorization primarily on scopes/roles and sometimes other claims.",
+      "tags": [
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "PKCE: what are code_challenge and code_verifier?",
+      "back": "code_verifier is a high-entropy secret created by the client; code_challenge is its derived value (S256 recommended) sent to /authorize. Later, client proves possession by sending code_verifier to /token.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is offline_access?",
+      "back": "An OAuth scope that requests a refresh token so the client can get new access tokens without re-prompting the user. Required for web/native apps; SPAs have special 24h RT behavior.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/tokens/refresh"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Tenant-independent metadata: when to use?",
+      "back": "For multi-tenant apps validating tokens from many tenants; use common/organizations metadata and validate iss and signing key issuer using tid substitution.",
+      "tags": [
+        "entra/endpoints-metadata",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Token replay protections to implement?",
+      "back": "Validate nonce (ID tokens), state (CSRF), pair code_verifier with code (PKCE), bind cookies to SameSite/Lax/Strict as appropriate, store RTs securely server-side, rotate RTs.",
+      "tags": [
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Error triage essentials from error responses?",
+      "back": "Look at error, error_description, error_codes, trace_id, correlation_id, timestamp. Map to actionable steps: fix request vs prompt for consent vs retry vs interactive auth.",
+      "tags": [
+        "entra/troubleshooting"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Handling CORS and third-party cookie limits for SPAs?",
+      "back": "Use spa redirect URIs, rely on MSAL’s iframe/top-level navigation strategies; expect daily interactive auth in browsers without third-party cookies.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why should clients not validate access tokens?",
+      "back": "They’re meant for APIs; clients lack resource-specific rules and may mis-validate, leading to confused-deputy risks. Rely on token response metadata for caching instead.",
+      "tags": [
+        "entra/tokens/access",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How should an API handle token key rollover?",
+      "back": "Regularly refresh jwks keys (e.g., every 24h), match by kid, handle 401 with retry after refresh, and be resilient to multiple valid keys during transition.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are delegated vs application permissions?",
+      "back": "Delegated permissions act on behalf of a signed-in user (scopes). Application permissions are app-only (roles) without user context; require admin consent and confidential client.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How are permissions exposed by an API?",
+      "back": "Define scopes (delegated) and app roles (application) in the API app registration (app manifest or UI). Clients request them; admins/users consent.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is admin consent and when is it required?",
+      "back": "When a requested permission is marked admin-only (e.g., Graph Directory.ReadWrite.All) or for app roles. A tenant admin must grant consent.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the publisher verification badge?",
+      "back": "A mark indicating the app publisher has verified their domain; increases trust and may be required for multitenant consent experiences.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do app roles differ from groups?",
+      "back": "App roles are assignments to the service principal for the app, tailored to app authorization; groups are directory constructs and can be large/overage.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Where are reply URLs (redirect URIs) configured?",
+      "back": "In App registrations > Authentication. Must exactly match (URL-encoded on the wire). SPAs must use type=spa.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the Application ID URI?",
+      "back": "The identifier for your API (e.g., api://{app-id} or a verified domain URI). It becomes the aud for tokens issued to your API.",
+      "tags": [
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do service principals relate to external tenants?",
+      "back": "Each tenant that uses your multitenant app has its own service principal instance with local policy (assignments, conditional access, etc.).",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Single-tenant vs multitenant apps?",
+      "back": "Single-tenant apps accept accounts in one directory; multitenant apps accept accounts in any directory (and optionally personal accounts).",
+      "tags": [
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What does signInAudience control?",
+      "back": "Who can sign in: AzureADMyOrg, AzureADMultipleOrgs, AzureADandPersonalMicrosoftAccount, etc. Must be consistent with endpoints used.",
+      "tags": [
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which authorities correspond to audience?",
+      "back": "common (any org + MSA), organizations (any org), consumers (MSA only), or a specific tenant ID/domain for single-tenant.",
+      "tags": [
+        "entra/endpoints-metadata",
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do national clouds alter authorities?",
+      "back": "Base domain changes (e.g., login.chinacloudapi.cn). Validate OIDC metadata per cloud; Graph endpoint base also differs.",
+      "tags": [
+        "entra/endpoints-metadata"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the ‘state’ parameter for?",
+      "back": "Opaque value to prevent CSRF and preserve app state across redirects; must be validated on return.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is c_hash (hybrid flow)?",
+      "back": "A hash of the authorization code included in the ID token when using hybrid flow; helps bind code to the id_token.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When is response_mode=fragment problematic?",
+      "back": "For server-rendered apps because fragments aren’t sent to servers; prefer form_post.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is prompt=none used for?",
+      "back": "Attempt silent auth without UI. If not possible, returns interaction_required or login_required.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are login_hint and domain_hint?",
+      "back": "Hints to streamline home realm discovery and prefill username or direct to federated IdP; improves UX.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How does the device code flow work?",
+      "back": "Client gets a device_code and user_code; user visits verification URL on another device to authorize; client polls for token until authorized or expires.",
+      "tags": [
+        "entra/protocols/oauth2/device-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "OBO flow token request essentials?",
+      "back": "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer, requested_token_use=on_behalf_of, assertion=<incoming JWT>, scope/resource for downstream API.",
+      "tags": [
+        "entra/protocols/oauth2/obo"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Client credentials best practices?",
+      "back": "Use certificates (private_key_jwt), rotate regularly, least-privileged app roles, and store secrets in HSM/Key Vault.",
+      "tags": [
+        "entra/protocols/oauth2/client-credentials",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "ROPC limitations with federated identities?",
+      "back": "Fails when user is federated to external IdP (e.g., ADFS) or requires MFA/challenges; breaks modern security and UX.",
+      "tags": [
+        "entra/protocols/oauth2/ropc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "ID token vs access token intended audience?",
+      "back": "ID token’s aud is the client app; access token’s aud is the resource API. Don’t use ID token to call APIs.",
+      "tags": [
+        "entra/tokens/id",
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which core ID token claims should apps rely on?",
+      "back": "iss, aud, sub, iat, nbf, exp, nonce, tid, oid/preferred_username; avoid upn/email as stable identifiers across tenants.",
+      "tags": [
+        "entra/tokens/id",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are optional claims (profile/email/upn)?",
+      "back": "OIDC identity claims clients may request; issuance controlled by resource or directory config; may be absent based on policy.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to handle group overage?",
+      "back": "If groups exceed limit, token has hasgroups=true and no groups list. Client must call Graph to resolve group memberships.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is Continuous Access Evaluation (CAE) impact on tokens?",
+      "back": "Tokens can become invalid mid-flight based on risk/sign-in changes; library handles 401/claims challenges to reauthorize.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/tokens/lifetimes"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are claims challenges?",
+      "back": "API can return WWW-Authenticate with claims to force reauth/step-up (e.g., MFA); MSAL interprets and acquires a new token with additional claims.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which token header fields pick the key?",
+      "back": "alg (e.g., RS256) and kid to select the JWK from jwks_uri; use kid, not x5t for v2 tokens.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How often to refresh JWKS?",
+      "back": "About every 24 hours, or on validation failure with unknown kid; cache with respect to cache-control headers.",
+      "tags": [
+        "entra/tokens/validation",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is aud claim misuse risk?",
+      "back": "Accepting tokens where aud isn’t your API leads to the “confused deputy” problem; always enforce aud.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How does MSAL help with PKCE and CAE?",
+      "back": "Automatically sets PKCE, caches tokens, interprets CAE challenges, and handles retries; reduces protocol errors.",
+      "tags": [
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Public vs confidential clients?",
+      "back": "Public clients can’t keep secrets (SPAs, native/mobile). Confidential clients can (web apps, daemons) and use client secrets/certificates.",
+      "tags": [
+        "entra/msal",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to choose redirect URIs for native apps?",
+      "back": "Use https://login.microsoftonline.com/common/oauth2/nativeclient or loopback http://localhost URIs; don’t use custom schemes unless library supports.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "SameSite cookie changes impact?",
+      "back": "Browser defaults can break server sessions and silent auth if misconfigured; set cookie attributes appropriately and follow guidance.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/troubleshooting"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Third-party cookies and SPAs?",
+      "back": "Blocking third-party cookies prevents silent iframe auth; require top-level navigation or popup for refresh at least once per ~24h.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is claims mapping customization?",
+      "back": "A feature to inject custom claims from directory/on-prem into tokens; may require custom signing keys and appid-specific JWKS.",
+      "tags": [
+        "entra/tokens/claims",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to request admin consent programmatically?",
+      "back": "Use admin consent endpoint with tenant admin, or the Azure portal Enterprise Apps permission grant flow.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you restrict an app to certain users?",
+      "back": "Use assignment required on the enterprise app and assign users/groups or app roles accordingly.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the Entra application manifest?",
+      "back": "JSON document describing app (redirect URIs, permissions, roles, optional claims, accessTokenAcceptedVersion, etc.).",
+      "tags": [
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Scopes model in v2 endpoints?",
+      "back": "Scopes are resource-scoped strings like api://app-id/.default or https://graph.microsoft.com/User.Read; clients must request per resource.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is .default scope?",
+      "back": "Resource-specific scope that maps to all static permissions configured on the client for that resource; often used with client credentials.",
+      "tags": [
+        "entra/protocols/oauth2/client-credentials",
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is incremental consent?",
+      "back": "Request additional scopes over time; MSAL merges previously granted scopes for the same resource.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to use SAML with Entra ID?",
+      "back": "For legacy enterprise apps expecting SAML SSO; Entra can issue SAML tokens and support SAML SSO/Single Logout.",
+      "tags": [
+        "entra/protocols/saml"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "SAML claims customization basics?",
+      "back": "Map directory attributes to SAML attributes; can include transformations; token format differs from JWT.",
+      "tags": [
+        "entra/protocols/saml",
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "SAML vs OIDC selection criteria?",
+      "back": "OIDC/OAuth for modern apps/APIs and mobile/SPAs; SAML for older enterprise SaaS integrations needing SSO only.",
+      "tags": [
+        "entra/protocols/saml",
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is token exchange (SAML ↔ OAuth)?",
+      "back": "Bridge scenarios where a SAML assertion is exchanged for OAuth token or vice versa; specialized flows apply.",
+      "tags": [
+        "entra/protocols/saml",
+        "entra/protocols/oauth2"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which errors imply consent or admin needed?",
+      "back": "consent_required on /token or access_denied on /authorize often indicate missing consent or admin-only scope.",
+      "tags": [
+        "entra/troubleshooting",
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which errors imply interactive auth needed?",
+      "back": "interaction_required or login_required; retry /authorize without prompt=none.",
+      "tags": [
+        "entra/troubleshooting",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the tid vs oid?",
+      "back": "tid is tenant ID (GUID); oid is the object ID of the user/service principal in the tenant; sub is subject identifier per issuer.",
+      "tags": [
+        "entra/tokens/id"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Preferred_username vs upn?",
+      "back": "preferred_username is a display-like login; upn can change and might not exist for MSAs; avoid as stable key across tenants.",
+      "tags": [
+        "entra/tokens/id"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Profile and email scopes behavior?",
+      "back": "Requesting profile/email may populate claims in ID token and UserInfo; not guaranteed if policy restricts.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why should APIs avoid parsing tokens from other resources?",
+      "back": "Different validation rules and claim contracts; accept only tokens where aud matches your API.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is token binding to client?",
+      "back": "PKCE for public clients, mutual-TLS or DPoP/POP tokens where supported; reduces token theft impact.",
+      "tags": [
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to configure CORS for SPA auth code?",
+      "back": "Mark redirect URIs as type=spa; token endpoint enforces Origin header; don’t use client secrets from browser.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the Entra OIDC end_session_endpoint?",
+      "back": "Endpoint to trigger sign-out and optionally front-channel logout to other apps; use post_logout_redirect_uri.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are consent experiences for multitenant apps?",
+      "back": "User consent, admin consent, and consent workflow vary by policy; publisher verification improves trust experience.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you expose an API to other tenants?",
+      "back": "Set signInAudience to multiple orgs, define scopes/roles, configure App ID URI, and document consent process.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is enterprise app role assignment?",
+      "back": "Assign app roles to users/groups on the service principal to control app authorization.",
+      "tags": [
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Conditional Access effects on tokens?",
+      "back": "CA can enforce MFA, device compliance, sign-in frequency; can trigger claims challenges and shorten effective sessions.",
+      "tags": [
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to handle token caching securely?",
+      "back": "Cache tokens server-side in confidential clients; for SPAs/native rely on MSAL caches and OS-protected storage; never log tokens.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why is implicit flow discouraged?",
+      "back": "Tokens in URL fragments, no PKCE, increased attack surface; auth code with PKCE supersedes implicit for SPAs.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the Graph UserInfo endpoint scope?",
+      "back": "Use openid profile email; additional Graph scopes (e.g., User.Read) are unrelated unless you call Graph APIs directly.",
+      "tags": [
+        "entra/protocols/oidc",
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you validate exp, nbf, iat safely?",
+      "back": "Allow small clock skew, reject tokens outside validity window, and prefer library defaults.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is kid collision handling?",
+      "back": "If kid not found, refresh JWKS; if multiple matching keys exist, try each; cache per kid; handle transient rollover windows.",
+      "tags": [
+        "entra/tokens/validation",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is response_type=token use today?",
+      "back": "Legacy implicit for access tokens; avoid in new apps. Prefer code+PKCE.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to migrate from ADAL to MSAL?",
+      "back": "Follow migration guidance; update auth endpoints to v2, replace ADAL APIs with MSAL equivalents, and test consent/scopes.",
+      "tags": [
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is organizations vs common authority difference?",
+      "back": "organizations excludes MSAs; common includes both MSAs and org accounts.",
+      "tags": [
+        "entra/endpoints-metadata",
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How do you request downstream scopes in OBO?",
+      "back": "API requests scopes/roles for the next API; the user must have consent/admin approval for those permissions.",
+      "tags": [
+        "entra/protocols/oauth2/obo",
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the /.well-known/openid-configuration appid parameter for?",
+      "back": "When custom signing keys are used, add appid to fetch app-specific JWKS for validation.",
+      "tags": [
+        "entra/endpoints-metadata",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How does MSAL select account silently?",
+      "back": "Uses cache and account identifiers (homeAccountId, localAccountId, tenantId) and falls back to interactive if needed.",
+      "tags": [
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to avoid over-scoping?",
+      "back": "Request least privilege; use incremental consent; split scopes by feature.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When do tokens include roles?",
+      "back": "When client requests your API and the assignment has app roles; roles claim appears for application permissions, and for delegated roles when configured.",
+      "tags": [
+        "entra/tokens/claims",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to interpret scope vs roles in tokens?",
+      "back": "scope claim lists delegated permissions; roles claim lists app roles (application or delegated roles assigned).",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the effect of accessTokenAcceptedVersion?",
+      "back": "Controls token format v1 vs v2 issued for your API; adjust validation/claims expectations accordingly.",
+      "tags": [
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Can you request tokens for multiple resources at /token?",
+      "back": "No. Token redemption is for one resource; for multiple, repeat the flow or use on-behalf-of patterns.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What’s the difference between consent on /authorize vs /token?",
+      "back": "Consent is granted during /authorize. /token may return consent_required if scope wasn’t granted for redemption.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/troubleshooting"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to configure app branding and TOS/Privacy?",
+      "back": "Provide branding and links in app registration; improves consent UX and compliance.",
+      "tags": [
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to lock app properties?",
+      "back": "Use application instance property locks to prevent unapproved changes in enterprise app configurations.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to mark app as publisher verified?",
+      "back": "Verify DNS for publisher domain and associate it with the app registration; obtain the blue badge.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which claims are stable user IDs?",
+      "back": "sub within issuer, oid within tenant; combine with tid for cross-tenant stability; avoid email/UPN as keys.",
+      "tags": [
+        "entra/tokens/id"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to call Graph vs rely on token claims?",
+      "back": "Call Graph for dynamic data (groups when overage, profiles), or when claims aren’t present due to optional claim settings.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is token nbf claim?",
+      "back": "Not-before; token must not be accepted before this time; handle clock skew.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to handle CAE 401 with WWW-Authenticate?",
+      "back": "Let MSAL process the challenge and acquire a new token; for custom clients, parse claims and re-run /authorize.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is user_impersonation scope?",
+      "back": "A common delegated scope name for custom APIs indicating basic delegated access; authorization still enforced by API.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "When to use form_post on localhost?",
+      "back": "For web apps during development to deliver code/ID token securely to server; recommended by docs.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is response_mode=query default for?",
+      "back": "Authorization code only requests. When requesting id_token, default is fragment; prefer form_post for servers.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to configure supported account types?",
+      "back": "Set during app registration (who can use this application); affects authority/tenant selection.",
+      "tags": [
+        "entra/tenancy",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is forbidden in SPA token redemption?",
+      "back": "Using client_secret; also forbidden to use non-spa redirect URIs without Origin header.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to handle token audience mismatches?",
+      "back": "Return 401 with WWW-Authenticate indicating expected audience; never accept mismatched aud.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is application consent experience page?",
+      "back": "The consent UI that displays requested permissions, publisher info, and organization context; influenced by branding and verification.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to test auth end-to-end?",
+      "back": "Use test tenants, test users, and integration tests; leverage MSAL test utilities and environment setup guides.",
+      "tags": [
+        "entra/troubleshooting"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Which scopes grant refresh tokens?",
+      "back": "offline_access plus openid in code flow for web/native; SPAs have special RT handling with 24h policy.",
+      "tags": [
+        "entra/tokens/refresh",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to revoke refresh tokens?",
+      "back": "Server-driven via CA or account sign-out; clients should handle refresh token invalid_grant and reauthenticate.",
+      "tags": [
+        "entra/tokens/refresh",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is token ‘ver’ claim?",
+      "back": "Token version (1.0 or 2.0); informs which metadata and claim formats to expect.",
+      "tags": [
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to consume id_token in native/SPAs?",
+      "back": "For UX and display only; don’t use for authorization decisions in clients; APIs must enforce with access tokens.",
+      "tags": [
+        "entra/tokens/id"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to call downstream APIs from web app?",
+      "back": "Acquire on-behalf-of token in the web API layer or have web app call web API which calls downstream with OBO; never pass user tokens to client.",
+      "tags": [
+        "entra/protocols/oauth2/obo"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is scope/resource on /token?",
+      "back": "For v2 endpoints, use scope for desired resource; for v1 endpoints, resource parameter; MSAL manages this.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to use incremental consent with MSAL?",
+      "back": "Call acquireTokenInteractive with additional scopes; MSAL merges previously granted scopes.",
+      "tags": [
+        "entra/msal",
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What’s the error for CORS without SPA redirect?",
+      "back": "invalid_request with message about cross-origin token redemption only for SPA client-type; fix redirect URI type.",
+      "tags": [
+        "entra/troubleshooting",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to request app roles in client credentials?",
+      "back": "Use scope=.default and ensure app roles assigned to the client service principal; resulting token has roles claim.",
+      "tags": [
+        "entra/protocols/oauth2/client-credentials",
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is domain_hint=organizations/consumers value?",
+      "back": "Optimizes sign-in by bypassing email discovery; organizations routes to AAD, consumers to MSA.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why is email claim unreliable?",
+      "back": "May be absent or unverified; varies by tenant policy and account type; don’t use as key.",
+      "tags": [
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to validate issuer with common metadata?",
+      "back": "Replace {tenantid} with tid from token, then compare to iss; also ensure signing key issuer matches template.",
+      "tags": [
+        "entra/tokens/validation",
+        "entra/endpoints-metadata"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to choose between app roles vs scopes for internal apps?",
+      "back": "Scopes for delegated user actions; app roles for application-only and role-based authorization. Use both as needed.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the ‘kid’ rotation strategy?",
+      "back": "Maintain a mapping cache; if signature fails due to unknown kid, refresh JWKS and retry validation before rejecting.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Should clients store tokens in localStorage?",
+      "back": "Avoid. Prefer memory with refresh on navigation, or MSAL’s storage strategies; protect against XSS.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to avoid double-consent prompts?",
+      "back": "Request combined scopes per resource where possible; reuse existing accounts and cached tokens via MSAL.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/msal"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the relationship of tid and issuer in validation?",
+      "back": "iss must be of the form https://login.microsoftonline.com/{tid}/v2.0 where tid equals the token’s tid claim.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What does response_type=code id_token token mean?",
+      "back": "Legacy hybrid with implicit; not recommended. Prefer code+PKCE.",
+      "tags": [
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to configure token lifetimes today?",
+      "back": "Prefer CA Sign-in Frequency and rely on default lifetime variation or CTL policies when applicable.",
+      "tags": [
+        "entra/tokens/lifetimes",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is ‘nbf > exp’ anomaly handling?",
+      "back": "Treat as invalid token; such tokens should be rejected; handle clock skew but not paradoxical values.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to pass custom state safely?",
+      "back": "Encode and sign/encrypt state if it contains sensitive data; at minimum, validate and bind to session.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is account picker behavior with prompt=select_account?",
+      "back": "Forces the account selection UI even if SSO session exists; useful for multi-account scenarios.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to secure logout endpoints?",
+      "back": "Implement CSRF protection and require GET-only for front-channel; ensure no sensitive state changes based on third-party GETs beyond session clear.",
+      "tags": [
+        "entra/security-resilience",
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is application provisioning vs consent?",
+      "back": "Provisioning creates identities/assignments in target apps (SCIM); consent authorizes token issuance; they’re complementary.",
+      "tags": [
+        "entra/consent-permissions"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why avoid parsing tokens in logs?",
+      "back": "Tokens are credentials; logging them risks exfiltration; redact Authorization headers.",
+      "tags": [
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to scope tests across national clouds?",
+      "back": "Parameterize authority/Graph endpoints and run suites per cloud configuration.",
+      "tags": [
+        "entra/troubleshooting",
+        "entra/endpoints-metadata"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to model multi-API consent in apps?",
+      "back": "Request scopes per resource in /authorize, or use incremental consent as features are accessed.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/protocols/oauth2/auth-code"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is aud=api://{app-id} vs URI with domain?",
+      "back": "Both can be valid App ID URIs; domain-based requires verified publisher domain; choose one and keep consistent.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/tokens/access"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to identify MSA tokens?",
+      "back": "consumers tenant or specific MSA tenant ID; iss and tid reflect MSA tenancy; claims differ (no oid).",
+      "tags": [
+        "entra/tenancy",
+        "entra/tokens/id"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is the correlation_id used for?",
+      "back": "For diagnostics across components; share with support or track in logs.",
+      "tags": [
+        "entra/troubleshooting"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Trace ID vs Correlation ID?",
+      "back": "trace_id is per-request in STS; correlation_id spans client-server correlation for troubleshooting.",
+      "tags": [
+        "entra/troubleshooting"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to use Microsoft.Identity.Web?",
+      "back": "AddJwtBearer for APIs and AddMicrosoftIdentityWebApp for web apps; it wires validation/caching and token acquisition for downstream calls.",
+      "tags": [
+        "entra/msal",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Why is token audience enforced per API version?",
+      "back": "APIs may expose multiple audiences or versions; ensure the token targets the correct audience for the endpoint used.",
+      "tags": [
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to handle id_token_hint on logout?",
+      "back": "Optionally pass id_token_hint to help logout flow; not always required; follow platform guidance.",
+      "tags": [
+        "entra/protocols/oidc"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is jit vs provisioned users effect on claims?",
+      "back": "Guest/B2B users may have different claim sets; don’t assume directory attributes equality across tenants.",
+      "tags": [
+        "entra/tokens/claims",
+        "entra/tenancy"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is SecurityTokenSignatureKeyNotFoundException?",
+      "back": "Occurs when kid is unknown or keys rotated; refresh JWKS/config and retry.",
+      "tags": [
+        "entra/troubleshooting",
+        "entra/tokens/validation"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to constrain token size?",
+      "back": "Minimize optional claims, avoid large group membership in tokens, prefer roles or Graph lookups.",
+      "tags": [
+        "entra/tokens/claims",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What is app-resilience CAE guidance for APIs?",
+      "back": "Return 401 with WWW-Authenticate claims to trigger reauth; avoid blanket 500s; handle partial failures gracefully.",
+      "tags": [
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to verify email domain ownership for publisher verification?",
+      "back": "Create DNS TXT record for the publisher domain and verify in Entra; then assign domain to app registration.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/apps/app-model"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to handle reply URL changes safely?",
+      "back": "Plan coordinated deployments; tokens bound to redirect_uri must match exactly; keep old URIs during transitions.",
+      "tags": [
+        "entra/apps/app-model",
+        "entra/security-resilience"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "What are standard OAuth grant types supported?",
+      "back": "authorization_code, client_credentials, device_code, refresh_token, on_behalf_of (extension), saml-bearer (extension), ROPC (legacy).",
+      "tags": [
+        "entra/protocols/oauth2"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "Should APIs require specific scopes per endpoint?",
+      "back": "Yes. Enforce least-privileged scope/role per route; combine with app roles for admin operations.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/tokens/claims"
+      ]
+    },
+    {
+      "level": "Intermediate",
+      "front": "How to avoid prompting for consent repeatedly in multitenant apps?",
+      "back": "Use the same client_id/redirect URIs, stable scopes, and rely on tenant-wide admin consent when applicable.",
+      "tags": [
+        "entra/consent-permissions",
+        "entra/tenancy"
+      ]
+    }
+  ]
+}
