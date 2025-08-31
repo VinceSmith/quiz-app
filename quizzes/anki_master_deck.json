@@ -1,7 +1,13 @@
 {
-  "title": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers",
+  "title": "Vince Master Anki Deck",
   "writeup": "",
-  "source": "anki-entra-identity-platform.tsv",
+  "source": {
+    "merged_from": [
+      "entra-identity-platform.json",
+      "chat-memory"
+    ],
+    "generated_at": "2025-08-30T18:33:59.601177Z"
+  },
   "anki": [
     {
       "level": "None",
@@ -9,7 +15,8 @@
       "back": "A set of endpoints, libraries (MSAL), and tooling in Microsoft Entra ID that lets apps authenticate users (OIDC) and acquire tokens (OAuth 2.0) to call protected APIs like Microsoft Graph or your own. Key pillars: app registrations, protocols, tokens, consent/permissions, and libraries.",
       "tags": [
         "entra/overview"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -17,7 +24,8 @@
       "back": "Two core objects: Application object (global, tenant-agnostic definition of app, app roles, permissions, redirect URIs) and Service principal (tenant-local instance used for policy, consent, assignment). SPs exist per tenant where the app is used.",
       "tags": [
         "entra/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -26,7 +34,8 @@
       "tags": [
         "entra/tokens/access",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -34,7 +43,8 @@
       "back": "v1.0 vs v2.0 control claim formats and audiences; selected by the resource via accessTokenAcceptedVersion in the app manifest: null/1 => v1.0, 2 => v2.0. You can get a v2 token from the v1 endpoint if the resource accepts v2.",
       "tags": [
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -43,7 +53,8 @@
       "tags": [
         "entra/tokens/lifetimes",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -51,7 +62,8 @@
       "back": "Clients generally shouldn’t. Access tokens are for APIs to validate. Clients should cache by using expires_in and scope from the token response and avoid parsing tokens.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -59,7 +71,8 @@
       "back": "Signature (via OIDC jwks_uri), issuer (iss), audience (aud), expiration (exp/nbf), and tenant scoping (tid). Use tenant-specific or tenant-independent metadata with issuer rules; handle key rollover.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -68,7 +81,8 @@
       "tags": [
         "entra/endpoints-metadata",
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -77,7 +91,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -85,7 +100,8 @@
       "back": "response_type=id_token, scope=openid, nonce=... Plus tenant-specific authority, client_id, redirect_uri, response_mode (form_post recommended for web apps), and state.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -93,7 +109,8 @@
       "back": "A cryptographically random string the client generates and sends; the ID token includes the same nonce. The client must verify it to prevent replay.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -102,7 +119,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -110,7 +128,8 @@
       "back": "1) Redirect to end_session_endpoint (logout) with optional post_logout_redirect_uri; 2) Clear your app’s session/cookies. For single sign-out, implement front-channel logout URL and respond 200 after clearing sessions.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -118,7 +137,8 @@
       "back": "SPAs (with spa redirect type + CORS), server-side web apps, desktop and mobile apps. Avoid implicit; use code+PKCE for modern clients.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -126,7 +146,8 @@
       "back": "To allow cross-origin token redemption and CORS at the token endpoint. Without it, you’ll see CORS errors; SPAs must not use client secrets.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -134,7 +155,8 @@
       "back": "client_id, response_type=code (optionally id_token for hybrid), redirect_uri, response_mode, scope (can span multiple resources), state, PKCE parameters (code_challenge, code_challenge_method=S256), and optional prompt/login_hint/domain_hint.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -142,7 +164,8 @@
       "back": "Requesting an ID token along with the authorization code (response_type=code id_token), adding OIDC scopes and nonce. Useful to render UI while redeeming code server-side.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -150,7 +173,8 @@
       "back": "client_id, grant_type=authorization_code, code, redirect_uri (must match), code_verifier (if PKCE used—recommended/required for SPAs), plus client_secret or client_assertion only for confidential clients.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -159,7 +183,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -168,7 +193,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/tokens/lifetimes"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -177,7 +203,8 @@
       "tags": [
         "entra/tokens/refresh",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -185,7 +212,8 @@
       "back": "Used by a web API to exchange a user’s incoming token for a downstream API token, preserving user identity/delegation across tiers. Initiated at /token with grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer.",
       "tags": [
         "entra/protocols/oauth2/obo"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -193,7 +221,8 @@
       "back": "For daemon/background or server-to-server scenarios without user context. The app uses its own identity to get tokens for APIs that expose application permissions (app roles).",
       "tags": [
         "entra/protocols/oauth2/client-credentials"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -201,7 +230,8 @@
       "back": "For devices with limited input (TVs, CLI). User authenticates on a secondary device. Pair with PKCE-capable libs when possible; avoid embedding secrets.",
       "tags": [
         "entra/protocols/oauth2/device-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -209,7 +239,8 @@
       "back": "Avoid. Resource Owner Password Credentials is discouraged due to UX and security; lacks modern controls and breaks federated flows. Prefer auth code with PKCE or device code.",
       "tags": [
         "entra/protocols/oauth2/ropc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -217,7 +248,8 @@
       "back": "API/resource can request extra claims in tokens (e.g., upn, groups) via optional claims configuration; client requests scopes, resource controls claim issuance.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -225,7 +257,8 @@
       "back": "Use custom claims mapping or custom extensions; for complex cases, custom claims providers or API enrichment. Be mindful of token size limits and privacy.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -234,7 +267,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -242,7 +276,8 @@
       "back": "invalid_request, invalid_grant, unauthorized_client, invalid_client, unsupported_grant_type, invalid_resource, interaction_required, temporarily_unavailable, consent_required, invalid_scope. Inspect error_description, trace_id, correlation_id.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -251,7 +286,8 @@
       "tags": [
         "entra/tokens/validation",
         "entra/endpoints-metadata"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -259,7 +295,8 @@
       "back": "When using common/organizations authority, replace {tenantid} template with token tid and compare to iss; also ensure tid is a GUID; validate signing key issuer matches.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -267,7 +304,8 @@
       "back": "Permissions/scopes define what access is requested. Consent is the user/admin approving those permissions for a client app. Delegated permissions require a user; application permissions require admin consent.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -275,7 +313,8 @@
       "back": "It defines who can sign in: AzureADMyOrg, AzureADMultipleOrgs, AzureADandPersonalMicrosoftAccount, etc. Must align with endpoints used (common/organizations/consumers) and app’s audience.",
       "tags": [
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -283,7 +322,8 @@
       "back": "Authority and endpoints vary per cloud (Azure public, GCC, GCC High, China). Use correct base domain (login.microsoftonline.com vs login.chinacloudapi.cn). Configure libraries appropriately.",
       "tags": [
         "entra/endpoints-metadata"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -292,7 +332,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -301,7 +342,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -309,7 +351,8 @@
       "back": "Register the front-channel logout URL and implement an endpoint that clears sessions and returns 200 upon GET from Entra during single sign-out.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -317,7 +360,8 @@
       "back": "Use group overage claims (hasgroups) and Graph calls for large memberships; consider using app roles/role assignments to avoid large token size.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -325,7 +369,8 @@
       "back": "Prefer MSAL for correctness (PKCE, CAE, caching, retries). Hand-rolled calls are for reference/testing only; production should use MSAL or Microsoft.Identity.Web.",
       "tags": [
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -334,7 +379,8 @@
       "tags": [
         "entra/tokens/access",
         "entra/tokens/refresh"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -342,7 +388,8 @@
       "back": "Aud identifies the resource API; scope lists permissions granted on that token for that resource. APIs enforce authorization primarily on scopes/roles and sometimes other claims.",
       "tags": [
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -350,7 +397,8 @@
       "back": "code_verifier is a high-entropy secret created by the client; code_challenge is its derived value (S256 recommended) sent to /authorize. Later, client proves possession by sending code_verifier to /token.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -359,7 +407,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/tokens/refresh"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -368,7 +417,8 @@
       "tags": [
         "entra/endpoints-metadata",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -376,7 +426,8 @@
       "back": "Validate nonce (ID tokens), state (CSRF), pair code_verifier with code (PKCE), bind cookies to SameSite/Lax/Strict as appropriate, store RTs securely server-side, rotate RTs.",
       "tags": [
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -384,7 +435,8 @@
       "back": "Look at error, error_description, error_codes, trace_id, correlation_id, timestamp. Map to actionable steps: fix request vs prompt for consent vs retry vs interactive auth.",
       "tags": [
         "entra/troubleshooting"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -393,7 +445,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -402,7 +455,8 @@
       "tags": [
         "entra/tokens/access",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -411,7 +465,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -419,7 +474,8 @@
       "back": "Delegated permissions act on behalf of a signed-in user (scopes). Application permissions are app-only (roles) without user context; require admin consent and confidential client.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -428,7 +484,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -436,7 +493,8 @@
       "back": "When a requested permission is marked admin-only (e.g., Graph Directory.ReadWrite.All) or for app roles. A tenant admin must grant consent.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -444,7 +502,8 @@
       "back": "A mark indicating the app publisher has verified their domain; increases trust and may be required for multitenant consent experiences.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -453,7 +512,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -462,7 +522,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -470,7 +531,8 @@
       "back": "The identifier for your API (e.g., api://{app-id} or a verified domain URI). It becomes the aud for tokens issued to your API.",
       "tags": [
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -479,7 +541,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -487,7 +550,8 @@
       "back": "Single-tenant apps accept accounts in one directory; multitenant apps accept accounts in any directory (and optionally personal accounts).",
       "tags": [
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -495,7 +559,8 @@
       "back": "Who can sign in: AzureADMyOrg, AzureADMultipleOrgs, AzureADandPersonalMicrosoftAccount, etc. Must be consistent with endpoints used.",
       "tags": [
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -504,7 +569,8 @@
       "tags": [
         "entra/endpoints-metadata",
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -512,7 +578,8 @@
       "back": "Base domain changes (e.g., login.chinacloudapi.cn). Validate OIDC metadata per cloud; Graph endpoint base also differs.",
       "tags": [
         "entra/endpoints-metadata"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -521,7 +588,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -530,7 +598,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -538,7 +607,8 @@
       "back": "For server-rendered apps because fragments aren’t sent to servers; prefer form_post.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -547,7 +617,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -555,7 +626,8 @@
       "back": "Hints to streamline home realm discovery and prefill username or direct to federated IdP; improves UX.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -563,7 +635,8 @@
       "back": "Client gets a device_code and user_code; user visits verification URL on another device to authorize; client polls for token until authorized or expires.",
       "tags": [
         "entra/protocols/oauth2/device-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -571,7 +644,8 @@
       "back": "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer, requested_token_use=on_behalf_of, assertion=<incoming JWT>, scope/resource for downstream API.",
       "tags": [
         "entra/protocols/oauth2/obo"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -580,7 +654,8 @@
       "tags": [
         "entra/protocols/oauth2/client-credentials",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -588,7 +663,8 @@
       "back": "Fails when user is federated to external IdP (e.g., ADFS) or requires MFA/challenges; breaks modern security and UX.",
       "tags": [
         "entra/protocols/oauth2/ropc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -597,7 +673,8 @@
       "tags": [
         "entra/tokens/id",
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -606,7 +683,8 @@
       "tags": [
         "entra/tokens/id",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -614,7 +692,8 @@
       "back": "OIDC identity claims clients may request; issuance controlled by resource or directory config; may be absent based on policy.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -622,7 +701,8 @@
       "back": "If groups exceed limit, token has hasgroups=true and no groups list. Client must call Graph to resolve group memberships.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -631,7 +711,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/tokens/lifetimes"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -640,7 +721,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -648,7 +730,8 @@
       "back": "alg (e.g., RS256) and kid to select the JWK from jwks_uri; use kid, not x5t for v2 tokens.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -657,7 +740,8 @@
       "tags": [
         "entra/tokens/validation",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -665,7 +749,8 @@
       "back": "Accepting tokens where aud isn’t your API leads to the “confused deputy” problem; always enforce aud.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -673,7 +758,8 @@
       "back": "Automatically sets PKCE, caches tokens, interprets CAE challenges, and handles retries; reduces protocol errors.",
       "tags": [
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -682,7 +768,8 @@
       "tags": [
         "entra/msal",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -690,7 +777,8 @@
       "back": "Use https://login.microsoftonline.com/common/oauth2/nativeclient or loopback http://localhost URIs; don’t use custom schemes unless library supports.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -699,7 +787,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/troubleshooting"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -708,7 +797,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -717,7 +807,8 @@
       "tags": [
         "entra/tokens/claims",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -725,7 +816,8 @@
       "back": "Use admin consent endpoint with tenant admin, or the Azure portal Enterprise Apps permission grant flow.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -734,7 +826,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -742,7 +835,8 @@
       "back": "JSON document describing app (redirect URIs, permissions, roles, optional claims, accessTokenAcceptedVersion, etc.).",
       "tags": [
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -750,7 +844,8 @@
       "back": "Scopes are resource-scoped strings like api://app-id/.default or https://graph.microsoft.com/User.Read; clients must request per resource.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -759,7 +854,8 @@
       "tags": [
         "entra/protocols/oauth2/client-credentials",
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -768,7 +864,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -776,7 +873,8 @@
       "back": "For legacy enterprise apps expecting SAML SSO; Entra can issue SAML tokens and support SAML SSO/Single Logout.",
       "tags": [
         "entra/protocols/saml"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -785,7 +883,8 @@
       "tags": [
         "entra/protocols/saml",
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -794,7 +893,8 @@
       "tags": [
         "entra/protocols/saml",
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -803,7 +903,8 @@
       "tags": [
         "entra/protocols/saml",
         "entra/protocols/oauth2"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -812,7 +913,8 @@
       "tags": [
         "entra/troubleshooting",
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -821,7 +923,8 @@
       "tags": [
         "entra/troubleshooting",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -829,7 +932,8 @@
       "back": "tid is tenant ID (GUID); oid is the object ID of the user/service principal in the tenant; sub is subject identifier per issuer.",
       "tags": [
         "entra/tokens/id"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -837,7 +941,8 @@
       "back": "preferred_username is a display-like login; upn can change and might not exist for MSAs; avoid as stable key across tenants.",
       "tags": [
         "entra/tokens/id"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -846,7 +951,8 @@
       "tags": [
         "entra/protocols/oidc",
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -854,7 +960,8 @@
       "back": "Different validation rules and claim contracts; accept only tokens where aud matches your API.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -862,7 +969,8 @@
       "back": "PKCE for public clients, mutual-TLS or DPoP/POP tokens where supported; reduces token theft impact.",
       "tags": [
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -870,7 +978,8 @@
       "back": "Mark redirect URIs as type=spa; token endpoint enforces Origin header; don’t use client secrets from browser.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -878,7 +987,8 @@
       "back": "Endpoint to trigger sign-out and optionally front-channel logout to other apps; use post_logout_redirect_uri.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -887,7 +997,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -896,7 +1007,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -904,7 +1016,8 @@
       "back": "Assign app roles to users/groups on the service principal to control app authorization.",
       "tags": [
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -912,7 +1025,8 @@
       "back": "CA can enforce MFA, device compliance, sign-in frequency; can trigger claims challenges and shorten effective sessions.",
       "tags": [
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -921,7 +1035,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -929,7 +1044,8 @@
       "back": "Tokens in URL fragments, no PKCE, increased attack surface; auth code with PKCE supersedes implicit for SPAs.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -937,7 +1053,8 @@
       "back": "Allow small clock skew, reject tokens outside validity window, and prefer library defaults.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -946,7 +1063,8 @@
       "tags": [
         "entra/tokens/validation",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -954,7 +1072,8 @@
       "back": "Legacy implicit for access tokens; avoid in new apps. Prefer code+PKCE.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -962,7 +1081,8 @@
       "back": "Follow migration guidance; update auth endpoints to v2, replace ADAL APIs with MSAL equivalents, and test consent/scopes.",
       "tags": [
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -971,7 +1091,8 @@
       "tags": [
         "entra/endpoints-metadata",
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -980,7 +1101,8 @@
       "tags": [
         "entra/protocols/oauth2/obo",
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -989,7 +1111,8 @@
       "tags": [
         "entra/endpoints-metadata",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -997,7 +1120,8 @@
       "back": "Uses cache and account identifiers (homeAccountId, localAccountId, tenantId) and falls back to interactive if needed.",
       "tags": [
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1005,7 +1129,8 @@
       "back": "Request least privilege; use incremental consent; split scopes by feature.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1014,7 +1139,8 @@
       "tags": [
         "entra/tokens/claims",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1022,7 +1148,8 @@
       "back": "scope claim lists delegated permissions; roles claim lists app roles (application or delegated roles assigned).",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1030,7 +1157,8 @@
       "back": "Controls token format v1 vs v2 issued for your API; adjust validation/claims expectations accordingly.",
       "tags": [
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1038,7 +1166,8 @@
       "back": "No. Token redemption is for one resource; for multiple, repeat the flow or use on-behalf-of patterns.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1047,7 +1176,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/troubleshooting"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1055,7 +1185,8 @@
       "back": "Provide branding and links in app registration; improves consent UX and compliance.",
       "tags": [
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1064,7 +1195,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1073,7 +1205,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1081,7 +1214,8 @@
       "back": "sub within issuer, oid within tenant; combine with tid for cross-tenant stability; avoid email/UPN as keys.",
       "tags": [
         "entra/tokens/id"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1089,7 +1223,8 @@
       "back": "Call Graph for dynamic data (groups when overage, profiles), or when claims aren’t present due to optional claim settings.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1097,7 +1232,8 @@
       "back": "Not-before; token must not be accepted before this time; handle clock skew.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1106,7 +1242,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1115,7 +1252,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1123,7 +1261,8 @@
       "back": "For web apps during development to deliver code/ID token securely to server; recommended by docs.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1132,7 +1271,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1141,7 +1281,8 @@
       "tags": [
         "entra/tenancy",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1149,7 +1290,8 @@
       "back": "Using client_secret; also forbidden to use non-spa redirect URIs without Origin header.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1157,7 +1299,8 @@
       "back": "Return 401 with WWW-Authenticate indicating expected audience; never accept mismatched aud.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1165,7 +1308,8 @@
       "back": "The consent UI that displays requested permissions, publisher info, and organization context; influenced by branding and verification.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1173,7 +1317,8 @@
       "back": "Use test tenants, test users, and integration tests; leverage MSAL test utilities and environment setup guides.",
       "tags": [
         "entra/troubleshooting"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1182,7 +1327,8 @@
       "tags": [
         "entra/tokens/refresh",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1191,7 +1337,8 @@
       "tags": [
         "entra/tokens/refresh",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1199,7 +1346,8 @@
       "back": "Token version (1.0 or 2.0); informs which metadata and claim formats to expect.",
       "tags": [
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1207,7 +1355,8 @@
       "back": "For UX and display only; don’t use for authorization decisions in clients; APIs must enforce with access tokens.",
       "tags": [
         "entra/tokens/id"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1215,7 +1364,8 @@
       "back": "Acquire on-behalf-of token in the web API layer or have web app call web API which calls downstream with OBO; never pass user tokens to client.",
       "tags": [
         "entra/protocols/oauth2/obo"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1224,7 +1374,8 @@
       "tags": [
         "entra/protocols/oauth2/auth-code",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1233,7 +1384,8 @@
       "tags": [
         "entra/msal",
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1242,7 +1394,8 @@
       "tags": [
         "entra/troubleshooting",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1251,7 +1404,8 @@
       "tags": [
         "entra/protocols/oauth2/client-credentials",
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1259,7 +1413,8 @@
       "back": "Optimizes sign-in by bypassing email discovery; organizations routes to AAD, consumers to MSA.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1267,7 +1422,8 @@
       "back": "May be absent or unverified; varies by tenant policy and account type; don’t use as key.",
       "tags": [
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1276,7 +1432,8 @@
       "tags": [
         "entra/tokens/validation",
         "entra/endpoints-metadata"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1285,7 +1442,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1294,7 +1452,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1303,7 +1462,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1312,7 +1472,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/msal"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1320,7 +1481,8 @@
       "back": "iss must be of the form https://login.microsoftonline.com/{tid}/v2.0 where tid equals the token’s tid claim.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1328,7 +1490,8 @@
       "back": "Legacy hybrid with implicit; not recommended. Prefer code+PKCE.",
       "tags": [
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1336,7 +1499,8 @@
       "back": "Treat as invalid token; such tokens should be rejected; handle clock skew but not paradoxical values.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1345,7 +1509,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1353,7 +1518,8 @@
       "back": "Forces the account selection UI even if SSO session exists; useful for multi-account scenarios.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1362,7 +1528,8 @@
       "tags": [
         "entra/security-resilience",
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1370,7 +1537,8 @@
       "back": "Provisioning creates identities/assignments in target apps (SCIM); consent authorizes token issuance; they’re complementary.",
       "tags": [
         "entra/consent-permissions"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1378,7 +1546,8 @@
       "back": "Tokens are credentials; logging them risks exfiltration; redact Authorization headers.",
       "tags": [
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1387,7 +1556,8 @@
       "tags": [
         "entra/troubleshooting",
         "entra/endpoints-metadata"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1396,7 +1566,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/protocols/oauth2/auth-code"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1405,7 +1576,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/tokens/access"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1414,7 +1586,8 @@
       "tags": [
         "entra/tenancy",
         "entra/tokens/id"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1422,7 +1595,8 @@
       "back": "For diagnostics across components; share with support or track in logs.",
       "tags": [
         "entra/troubleshooting"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1430,7 +1604,8 @@
       "back": "trace_id is per-request in STS; correlation_id spans client-server correlation for troubleshooting.",
       "tags": [
         "entra/troubleshooting"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1439,7 +1614,8 @@
       "tags": [
         "entra/msal",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1447,7 +1623,8 @@
       "back": "APIs may expose multiple audiences or versions; ensure the token targets the correct audience for the endpoint used.",
       "tags": [
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1455,7 +1632,8 @@
       "back": "Optionally pass id_token_hint to help logout flow; not always required; follow platform guidance.",
       "tags": [
         "entra/protocols/oidc"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1464,7 +1642,8 @@
       "tags": [
         "entra/tokens/claims",
         "entra/tenancy"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1473,7 +1652,8 @@
       "tags": [
         "entra/troubleshooting",
         "entra/tokens/validation"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1482,7 +1662,8 @@
       "tags": [
         "entra/tokens/claims",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1490,7 +1671,8 @@
       "back": "Return 401 with WWW-Authenticate claims to trigger reauth; avoid blanket 500s; handle partial failures gracefully.",
       "tags": [
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1499,7 +1681,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/apps/app-model"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1508,7 +1691,8 @@
       "tags": [
         "entra/apps/app-model",
         "entra/security-resilience"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1516,7 +1700,8 @@
       "back": "authorization_code, client_credentials, device_code, refresh_token, on_behalf_of (extension), saml-bearer (extension), ROPC (legacy).",
       "tags": [
         "entra/protocols/oauth2"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1525,7 +1710,8 @@
       "tags": [
         "entra/consent-permissions",
         "entra/tokens/claims"
-      ]
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
     },
     {
       "level": "None",
@@ -1534,6 +1720,469 @@
       "tags": [
         "entra/consent-permissions",
         "entra/tenancy"
+      ],
+      "subject": "Microsoft identity platform (Entra ID) — Developer-depth for Product Managers"
+    },
+    {
+      "level": "None",
+      "subject": "Entra B2C Custom Journeys",
+      "front": "What is a custom journey in Entra B2C?",
+      "back": "A user-defined orchestration of steps, sign-in, API calls, MFA, profiling, described in Identity Experience Framework XML, giving full control over the authentication flow.",
+      "tags": [
+        "entra_b2c",
+        "journeys"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Entra B2C Custom Journeys",
+      "front": "How does Entra B2C pull in an external IdP’s access token into its claims pipeline?",
+      "back": "By mapping the IdP’s access_token to an internal claim via an OutputClaim in the IdP’s technical profile, for example PartnerClaimType=\"access_token\" to idp_access_token.",
+      "tags": [
+        "entra_b2c",
+        "claims",
+        "idp"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Entra B2C Custom Journeys",
+      "front": "When does idp_access_token become visible to the client?",
+      "back": "Only if it is also listed in the Relying Party policy’s OutputClaims, otherwise it stays internal to B2C.",
+      "tags": [
+        "entra_b2c",
+        "claims"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Safe Handling of IdP Tokens",
+      "front": "Why shouldn’t idp_access_token be exposed to SPAs?",
+      "back": "Because it is a third-party access token that could be abused to call the IdP’s APIs directly, and SPAs cannot keep it secure.",
+      "tags": [
+        "security",
+        "spa"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Safe Handling of IdP Tokens",
+      "front": "What’s the standard way to expose idp_access_token to a backend API but not to the client?",
+      "back": "Include it only in access tokens issued for your API, audience equals your API, not in the ID token returned to the client.",
+      "tags": [
+        "security",
+        "tokens"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Safe Handling of IdP Tokens",
+      "front": "What OAuth pattern underlies this server-only upstream tokens approach?",
+      "back": "Audience-scoped access tokens, tokens are minted only for the API that should consume them.",
+      "tags": [
+        "oauth",
+        "patterns"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Entra B2C vs Okta Journeys",
+      "front": "How does Entra B2C’s approach to custom journeys differ from Okta CIAM’s?",
+      "back": "B2C uses XML custom policies for step-by-step orchestration, Okta uses pre-defined flows with extension via Inline Hooks and config.",
+      "tags": [
+        "comparison",
+        "okta",
+        "entra_b2c"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Entra B2C vs Okta Journeys",
+      "front": "Which has more flexibility and which is easier to configure?",
+      "back": "Entra B2C is more flexible but complex, Okta is easier to configure but limited to built-in flow points.",
+      "tags": [
+        "comparison",
+        "okta",
+        "entra_b2c"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Entra B2C vs Okta Journeys",
+      "front": "How does AI change the trade-off between Entra B2C and Okta?",
+      "back": "AI reduces the pain of B2C’s XML complexity, making its flexibility more accessible, while Okta gains less because it was already simple.",
+      "tags": [
+        "comparison",
+        "ai"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What is the purpose of Authorization Code with PKCE?",
+      "back": "To let SPAs and mobile apps get tokens without a client secret, protecting against code interception.",
+      "tags": [
+        "oauth",
+        "pkce"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What is the Backend for Frontend pattern?",
+      "back": "A server sits between SPA and IdP, holds tokens itself, and issues a session cookie to the browser so tokens never appear in JavaScript.",
+      "tags": [
+        "bff",
+        "architecture"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What problem does On-Behalf-Of solve?",
+      "back": "Lets an API call another downstream API using a token scoped for it, without reusing the original client token.",
+      "tags": [
+        "oauth",
+        "obo"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What is Refresh Token Rotation?",
+      "back": "Each time a refresh token is used, the IdP issues a new one and invalidates the old, reducing replay if stolen.",
+      "tags": [
+        "tokens",
+        "refresh"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What is the purpose of DPoP?",
+      "back": "Bind a token to a client’s private key to stop bearer replay attacks.",
+      "tags": [
+        "security",
+        "dpop"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "In what scenario is mTLS commonly used in OAuth?",
+      "back": "High-assurance APIs such as financial services, for example PSD2, to bind tokens to a TLS client certificate.",
+      "tags": [
+        "security",
+        "mtls"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What is Progressive Profiling?",
+      "back": "Collecting minimal attributes at sign-up and prompting for more over time to reduce drop-off.",
+      "tags": [
+        "ciam",
+        "profile"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What is Risk-based Step-up?",
+      "back": "Adding MFA or extra checks only if the login context looks risky, device, IP, behavior.",
+      "tags": [
+        "ciam",
+        "risk"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "OAuth / OIDC Patterns",
+      "front": "What’s the difference between front-channel logout and back-channel logout?",
+      "back": "Front-channel uses browser redirects to notify apps, back-channel uses server-to-server calls and is more reliable in enterprises.",
+      "tags": [
+        "logout"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "General Authentication Principles",
+      "front": "Why are access tokens typically short-lived and refresh tokens longer-lived?",
+      "back": "To limit the blast radius of a stolen access token while still allowing long-lived sessions.",
+      "tags": [
+        "tokens",
+        "lifetimes"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "General Authentication Principles",
+      "front": "Why is account recovery usually treated as higher risk than sign-in?",
+      "back": "Because recovery can reset or bypass existing factors, so it often requires stricter verification.",
+      "tags": [
+        "security",
+        "recovery"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Authorization Code + PKCE?",
+      "back": "A secure flow for public clients like SPAs and mobile apps that avoids client secrets and mitigates code interception. Use it whenever a browser or mobile app needs direct tokens.",
+      "tags": [
+        "patterns",
+        "pkce"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Backend for Frontend (BFF)?",
+      "back": "A pattern where the server holds tokens and gives the browser a session cookie, keeping tokens out of JavaScript. Use it in high-security SPAs or whenever you do not want tokens in the browser.",
+      "tags": [
+        "patterns",
+        "bff"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is On-Behalf-Of (OBO) / Token Exchange?",
+      "back": "A flow where an API exchanges a user’s token for a new one scoped to a downstream API. Use it in microservices when an API must call another API under the user’s identity.",
+      "tags": [
+        "patterns",
+        "obo"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is the Client Credentials Flow?",
+      "back": "A flow where a service authenticates directly with no user context. Use it for machine-to-machine jobs, daemons, or backend services.",
+      "tags": [
+        "patterns",
+        "client-credentials"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Refresh Token Rotation?",
+      "back": "A mechanism where each use of a refresh token returns a new one and invalidates the old. Use it whenever storing refresh tokens to reduce replay risk.",
+      "tags": [
+        "patterns",
+        "refresh"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Short-lived Access, Long-lived Refresh?",
+      "back": "A token lifetime pattern that limits damage from stolen access tokens while enabling long-lived sessions. Use it as a default in most OAuth flows.",
+      "tags": [
+        "patterns",
+        "lifetimes"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Front-channel Logout?",
+      "back": "A logout pattern that uses browser redirects to notify apps of IdP logout. Use it in simpler ecosystems where lightweight logout sync is acceptable.",
+      "tags": [
+        "patterns",
+        "logout"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Back-channel Logout?",
+      "back": "A logout pattern that sends server-to-server notifications of logout. Use it in enterprise apps that require reliable, consistent global logout.",
+      "tags": [
+        "patterns",
+        "logout"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Token Introspection / Revocation?",
+      "back": "A mechanism where APIs check token validity dynamically with the IdP. Use it in high-trust or compliance-driven apps that need fast revocation.",
+      "tags": [
+        "patterns",
+        "introspection"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Progressive Profiling?",
+      "back": "A user-journey pattern that collects only minimal info at sign-up and asks for more later. Use it in CIAM, retail, or e-commerce apps to reduce drop-off.",
+      "tags": [
+        "patterns",
+        "ciam"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Risk-based Step-up?",
+      "back": "A pattern where MFA or extra checks are added only when login looks risky. Use it in fraud-sensitive scenarios like banking, healthcare, or payments.",
+      "tags": [
+        "patterns",
+        "risk"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Account Linking?",
+      "back": "A pattern that ties multiple IdPs to a single user profile. Use it in CIAM apps with social and enterprise logins or loyalty integrations.",
+      "tags": [
+        "patterns",
+        "ciam"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Step-up Credential Recovery?",
+      "back": "A recovery pattern that makes resetting credentials stricter than signing in. Use it whenever account recovery could bypass normal factors.",
+      "tags": [
+        "patterns",
+        "recovery"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Passwordless First?",
+      "back": "An onboarding pattern where users rely on passkeys, FIDO2, or OTPs instead of passwords. Use it in consumer and mobile-first apps to avoid weak credentials.",
+      "tags": [
+        "patterns",
+        "passwordless"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is DPoP (Proof-of-Possession)?",
+      "back": "A mechanism that binds a token to a client’s private key to prevent replay. Use it in SPAs, mobile, or APIs that want to constrain bearer token theft.",
+      "tags": [
+        "patterns",
+        "dpop"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is mTLS (Mutual TLS)?",
+      "back": "A pattern binding tokens to TLS client certificates. Use it in high-assurance APIs such as finance, PSD2, and regulated services.",
+      "tags": [
+        "patterns",
+        "mtls"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Server-only Upstream Tokens?",
+      "back": "A pattern where third-party IdP tokens are placed only in API-bound access tokens, never in ID tokens. Use it to safely call upstream APIs like Google or Facebook from your backend.",
+      "tags": [
+        "patterns",
+        "upstream"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Authentication Patterns",
+      "front": "What is Federation Bridging?",
+      "back": "A pattern where one system is an SP to an upstream IdP and an IdP to downstream apps. Use it in B2B logins or when bridging between social and enterprise protocols.",
+      "tags": [
+        "patterns",
+        "federation"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What does PKCE stand for and what does it do?",
+      "back": "Proof Key for Code Exchange, protects OAuth code flow for public clients by binding the authorization code to a client-generated secret.",
+      "tags": [
+        "acronyms",
+        "oauth"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What is a PRT?",
+      "back": "Primary Refresh Token, a long-lived refresh credential tied to device state in Entra ID used to obtain tokens silently on Windows and other devices.",
+      "tags": [
+        "acronyms",
+        "entra"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What does SAML stand for and where is it used?",
+      "back": "Security Assertion Markup Language, an XML-based federation protocol used for enterprise SSO to legacy apps and many SaaS providers.",
+      "tags": [
+        "acronyms",
+        "saml"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What is MFA?",
+      "back": "Multi-Factor Authentication, requiring more than one factor such as something you know, have, or are to sign in.",
+      "tags": [
+        "acronyms",
+        "auth"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What is SSO?",
+      "back": "Single Sign-On, reusing one session or token across multiple apps to avoid reauthentication.",
+      "tags": [
+        "acronyms",
+        "auth"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What is EDR?",
+      "back": "Endpoint Detection and Response, security tools that monitor endpoints for malicious activity and enable investigation and response.",
+      "tags": [
+        "acronyms",
+        "security"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What is ITDR?",
+      "back": "Identity Threat Detection and Response, capabilities that detect and mitigate identity-based threats across directories and authentication systems.",
+      "tags": [
+        "acronyms",
+        "security"
+      ]
+    },
+    {
+      "level": "None",
+      "subject": "Acronyms in Identity & Security",
+      "front": "What is PAM?",
+      "back": "Privileged Access Management, controls and monitors high-privilege accounts and sessions to reduce risk.",
+      "tags": [
+        "acronyms",
+        "security"
       ]
     }
   ]
